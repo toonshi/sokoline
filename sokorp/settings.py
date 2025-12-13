@@ -32,6 +32,9 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = ['overdear-asymptomatic-lawanna.ngrok-free.dev', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = ['https://overdear-asymptomatic-lawanna.ngrok-free.dev']
+
+
 
 # Application definition
 
