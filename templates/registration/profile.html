@@ -10,10 +10,21 @@
 
   <h3>Your Products</h3>
   {% for product in user.products.all %}
-    <div>
+    <div style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;">
       <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
       <p>Price: KES {{ product.price }}</p>
+      <button onclick="showPurchaseLink({{ product.pk }})">Get Link</button>
     </div>
   {% empty %}
     <p>You have no products yet.</p>
-  {% endfor %}{% endblock %}
+  {% endfor %}
+
+  <script>
+    function showPurchaseLink(productId) {
+      // Construct the absolute URL for the purchase link
+      const purchaseUrl = `{{ request.scheme }}://{{ request.get_host }}{% url 'product_purchase' pk=0 %}`.replace('0', productId);
+      // Show the URL in a prompt, which makes it easy to copy
+      window.prompt("Copy this direct purchase link:", purchaseUrl);
+    }
+  </script>
+{% endblock %}

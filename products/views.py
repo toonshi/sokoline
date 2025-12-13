@@ -1,3 +1,4 @@
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Product
@@ -20,3 +21,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
+def product_purchase_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'products/product_purchase.html', {'product': product})
