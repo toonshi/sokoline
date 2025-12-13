@@ -1,8 +1,10 @@
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -12,3 +14,7 @@ class SignUpView(CreateView):
 @login_required
 def profile(request):
     return render(request, 'registration/profile.html', {'user': request.user})
+
+def custom_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('home'))
