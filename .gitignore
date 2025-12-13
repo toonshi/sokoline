@@ -32,3 +32,4 @@ venv.bak/
 *.log
 .DS_Store
 .env
+.env.example
