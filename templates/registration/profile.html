@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ user.business_name }}</h2>
+  <p><strong>Username:</strong> {{ user.username }}</p>
+  <p><strong>Phone:</strong> {{ user.phone_number }}</p>
+  <p><strong>Bio:</strong> {{ user.bio }}</p>
+
+  <p><a href="{% url 'product_create' %}">Add New Product</a></p>
+
+  <h3>Your Products</h3>
+  {% for product in user.products.all %}
+    <div>
+      <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+      <p>Price: KES {{ product.price }}</p>
+    </div>
+  {% empty %}
+    <p>You have no products yet.</p>
+  {% endfor %}{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ product.name }}</h2>
+  <p><strong>Seller:</strong> {{ product.owner.business_name }}</p>
+  <p><strong>Price:</strong> KES {{ product.price }}</p>
+  <p>{{ product.description }}</p>
+
+  <button>Add to Cart</button>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Marketplace</h2>
+  
+  {% for product in product_list %}
+    <div>
+      <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+      <p>Price: KES {{ product.price }}</p>
+    </div>
+  {% empty %}
+    <p>There are no products in the marketplace yet.</p>
+  {% endfor %}
+
+{% endblock %}

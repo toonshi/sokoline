@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Welcome to Sokorp</h1>
+  <p>The best place for student hustles.</p>
+
+  {% if user.is_authenticated %}
+    <p>Hi {{ user.username }}!</p>
+    <p><a href="{% url 'profile' %}">View Your Profile</a></p>
+    <p><a href="{% url 'logout' %}">Log Out</a></p>
+  {% else %}
+    <p>You are not logged in.</p>
+    <p><a href="{% url 'login' %}">Log In</a></p>
+    <p><a href="{% url 'signup' %}">Sign Up as a Seller</a></p>
+  {% endif %}
+{% endblock %}
