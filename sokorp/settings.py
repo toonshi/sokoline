@@ -11,19 +11,24 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+dotenv.load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nvx2^pe6)edx69hiql*$wr3b7$38!lwym4n=#5wspxn10)u0!z'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = []
 
@@ -124,9 +129,9 @@ AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = '/'
 
-# Daraja API Settings (PLACEHOLDERS)
-DARAJA_CONSUMER_KEY = 'YOUR_CONSUMER_KEY'
-DARAJA_CONSUMER_SECRET = 'YOUR_CONSUMER_SECRET'
-DARAJA_SHORTCODE = 'YOUR_SHORTCODE' # For M-Pesa Express/Lipa Na M-Pesa
-DARAJA_PASSKEY = 'YOUR_PASSKEY' # For M-Pesa Express/Lipa Na M-Pesa
+# Daraja API Settings
+DARAJA_CONSUMER_KEY = os.environ.get('DARAJA_CONSUMER_KEY')
+DARAJA_CONSUMER_SECRET = os.environ.get('DARAJA_CONSUMER_SECRET')
+DARAJA_SHORTCODE = os.environ.get('DARAJA_SHORTCODE')
+DARAJA_PASSKEY = os.environ.get('DARAJA_PASSKEY')
 

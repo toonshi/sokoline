@@ -31,3 +31,4 @@ venv.bak/
 *.local.py
 *.log
 .DS_Store
+.env

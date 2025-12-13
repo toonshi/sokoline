@@ -3,7 +3,7 @@ import base64
 from django.conf import settings
 from django.utils import timezone
 from datetime import datetime
-from .models import AccessToken, LipaNaMpesaOnline # Import LipaNaMpesaOnline
+from .models import AccessToken, LipaNaMpesaOnline
 
 def get_access_token():
     # Check for a valid token in the database
