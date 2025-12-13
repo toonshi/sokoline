@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'products.apps.ProductsConfig',
+    'payments.apps.PaymentsConfig',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,10 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = '/'
+
+# Daraja API Settings (PLACEHOLDERS)
+DARAJA_CONSUMER_KEY = 'YOUR_CONSUMER_KEY'
+DARAJA_CONSUMER_SECRET = 'YOUR_CONSUMER_SECRET'
+DARAJA_SHORTCODE = 'YOUR_SHORTCODE' # For M-Pesa Express/Lipa Na M-Pesa
+DARAJA_PASSKEY = 'YOUR_PASSKEY' # For M-Pesa Express/Lipa Na M-Pesa
+
