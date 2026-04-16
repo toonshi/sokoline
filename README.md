@@ -50,6 +50,3 @@ cd sokoline-web
 npm install
 npm run dev
 ```
-
----
-*Created with ❤️ for Sokoline*

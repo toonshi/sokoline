@@ -28,6 +28,3 @@ On every authenticated request, the backend automatically syncs the following fr
 ### Backend Automated Tests
 - `sokoline.authentication.ClerkAuthentication`: Verifies token signature and expiration.
 - `UserViewSet.me`: Returns the current authenticated user's profile.
-
----
-*Last Updated: April 16, 2026*
