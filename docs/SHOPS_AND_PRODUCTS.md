@@ -1,33 +1,30 @@
-# Domain: Shops & Products
+# Domain: Shops & Products (PDP Upgrade)
 
-This domain handles the core structure of the marketplace: Vendors (Shops) and their Inventory (Products).
+This domain handles the core structure of the marketplace: Vendors (Shops) and their multi-variant Inventory (Products).
 
 ## 🏪 Shops
 - **Model**: `Shop`
+- **SEO**: Every shop has a unique `slug` (e.g. `api.sokoline.app/api/shops/tech-gadgets/`).
 - **Owner**: Linked to a Django `User`.
-- **Function**: Users can create their own shops and manage their inventory.
-- **Rules**:
-  - `AllowAny`: Browsing shops.
-  - `IsAuthenticated`: Creating and editing your own shop.
 
-## 📦 Products
+## 📦 Products & Variants
 - **Model**: `Product`
-- **Shop**: Each product belongs to a specific `Shop`.
-- **Category**: Products are organized by `Category`.
-- **Function**: Vendors add products to their shops; customers browse and buy.
-- **Rules**:
-  - `AllowAny`: Browsing products and categories.
-  - `IsAuthenticated`: Only the shop owner can add/edit products for their shop.
+- **Variants**: Supports multiple `ProductVariant` objects per product (e.g. Red Shirt, Blue Shirt).
+- **SEO**: Uses auto-generated unique slugs from product names.
+- **Images**: Supports `ProductImage` sets with a dedicated `is_feature` flag.
+- **Attributes**:
+    - `shipping_info`: Dedicated details for frontend shipping tabs.
+    - `return_policy`: Dedicated details for frontend returns tabs.
+    - `discount_price`: Supports sales and promotion logic.
 
-## 🧪 Testing the Domain
-### Backend
-- `ShopViewSet`: CRUD operations for shops.
-- `ProductViewSet`: CRUD operations for products (enforces shop ownership).
+## ⭐ Social Proof (Reviews)
+- **Model**: `Review`
+- **Logic**: Users can leave one review per product. Ratings are aggregated on the Product object as `average_rating`.
+- **Pagination**: The API supports offset-based pagination to handle "Load More" logic on the frontend.
 
-### Frontend
-- Product listing pages (PLP).
-- Product details pages (PDP).
-- Shop dashboards for vendors.
+## 🏷️ Discovery (Tags)
+- **Model**: `Tag`
+- **Recommendation Engine**: The `related_products` action on the Product ViewSet uses shared tags and categories to suggest similar items to users.
 
 ---
-*Last Updated: April 16, 2026*
+*Last Updated: April 18, 2026 (Post-PDP Architecture Upgrade)*

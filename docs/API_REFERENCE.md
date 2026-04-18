@@ -15,44 +15,40 @@ Endpoints for managing user profiles and identity.
 ### `GET /api/users/me/`
 - **Description**: Returns the currently authenticated user's profile.
 - **Access**: `IsAuthenticated` (Requires Bearer Token)
-- **Response**:
-  ```json
-  {
-    "id": 1,
-    "username": "user_id_from_clerk",
-    "email": "user@example.com",
-    "first_name": "Mike",
-    "last_name": "Agoya"
-  }
-  ```
 
 ---
 
-## 🏪 Shops
-The core entities representing vendors.
-
-### `GET /api/shops/`
-- **Description**: List all shops in the marketplace.
-- **Access**: `AllowAny` (Public)
-
-### `POST /api/shops/`
-- **Description**: Create a new shop for the authenticated user.
-- **Access**: `IsAuthenticated`
-- **Body**: `{ "name": "My Shop", "description": "Short bio..." }`
-
----
-
-## 📦 Products
+## 📦 Products & PDP
 The inventory items for sale.
 
 ### `GET /api/products/`
 - **Description**: List all products across all shops.
-- **Access**: `AllowAny` (Public)
+- **Query Params**: `?category=slug`, `?shop=slug`
+- **Response**: Returns rich objects including `slug`, `variants`, `images`, `tags`, and `average_rating`.
 
-### `POST /api/products/`
-- **Description**: Add a product to your own shop.
-- **Access**: `IsAuthenticated` (Must own the specified shop)
-- **Body**: `{ "name": "Shirt", "price": 20.00, "shop": 1, "category": 1 }`
+### `GET /api/products/{id}/related_products/`
+- **Description**: Returns 4 recommended products based on shared category and tags.
+- **Access**: `AllowAny`
+
+### `GET /api/tags/`
+- **Description**: List all available product tags.
+- **Access**: `AllowAny`
+
+---
+
+## ⭐ Reviews
+Customer feedback system.
+
+### `GET /api/reviews/`
+- **Description**: List all reviews across the marketplace.
+- **Query Params**: `?product=id`
+- **Pagination**: Offset-based (`?limit=10&offset=0`)
+- **Access**: `AllowAny`
+
+### `POST /api/reviews/`
+- **Description**: Create a review for a product.
+- **Access**: `IsAuthenticated` (One review per user per product)
+- **Body**: `{ "product": 1, "rating": 5, "comment": "Great product!" }`
 
 ---
 
@@ -66,7 +62,14 @@ Manage your personal cart.
 ### `POST /api/cart/checkout/`
 - **Description**: Converts the current cart into a formal Order and clears the cart.
 - **Access**: `IsAuthenticated`
-- **Returns**: The created `Order` object.
+
+---
+
+## 🏪 Shops
+The core entities representing vendors.
+
+### `GET /api/shops/`
+- **Description**: List all shops in the marketplace.
 
 ---
 
@@ -78,4 +81,4 @@ Review purchase history.
 - **Access**: `IsAuthenticated`
 
 ---
-*Last Updated: April 16, 2026*
+*Last Updated: April 18, 2026 (Post-PDP Architecture Upgrade)*
