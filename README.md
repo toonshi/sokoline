@@ -1,52 +1,39 @@
 # Sokoline: Modern Marketplace 🚀
 
-Sokoline is a full-stack marketplace built with **Next.js 16 (App Router)** and **Django 6 (DRF)**.
+Sokoline is a high-end, full-stack marketplace built for **student entrepreneurs**. It balances minimalist utility with the raw energy of the campus ecosystem.
 
 ## 🏗️ Project Architecture
-The project is split into two main components:
-- **`sokoline-backend/`**: Django REST Framework API with PostgreSQL.
-- **`sokoline-web/`**: Next.js frontend with Tailwind CSS and Clerk Auth.
+The project is split into two primary components:
+- **`sokoline-backend`**: A Django 6 (DRF) powerhouse. Upgraded for "Production Grade" reliability with support for multi-variant products, automated SEO slugs, and relational discovery.
+- **`sokoline-web`**: A Next.js 16 (App Router) frontend. Built with **Space Grotesque** typography and a **Rebellious Purple** aesthetic. Features a global synchronous cart and a professional vendor dashboard.
 
-## 🔐 Authentication (Clerk Integration)
-Sokoline uses **Clerk** for session management and user identity.
+## 🎨 Design Language: "Minimalist x Rebellious"
+- **Typography**: Space Grotesque (Geometric & Edge).
+- **Palette**: Near-Black (#1A1A1A) on Pure White (#FFFFFF) with a Digital Violet (#7C3AED) accent.
+- **Vibe**: Reliable and professional, but built strictly for the new generation of founders.
 
-### ⚙️ Setup
-1. **Frontend**: The `sokoline-web` app uses `@clerk/nextjs` for the UI.
-2. **Backend**: The `sokoline-backend` app uses a custom `ClerkAuthentication` class to verify JWT tokens.
-3. **Data Sync**: Clerk ID, Email, and Name are automatically synced to the Django `User` table on every request.
+## 🚀 Key User Journeys
+### The Buyer Loop (Complete ✅)
+- **Discovery**: SEO-friendly product browsing by slug.
+- **Selection**: Dynamic variant selection (color/size) with stock tracking.
+- **Cart**: Synchronous `CartProvider` ensuring bag state matches the backend in real-time.
+- **Checkout**: Atomic transaction handling from Cart -> Order.
 
-**JWT Template Config:**
-In the Clerk Dashboard, create a `django-backend` template with these claims:
-```json
-{
-  "email": "{{user.primary_email_address}}",
-  "first_name": "{{user.first_name}}",
-  "last_name": "{{user.last_name}}"
-}
-```
+### The Seller Loop (In Progress 🏗️)
+- **Dashboard**: Professional vendor portal with sales analytics and health insights.
+- **Inventory**: High-end data table for managing student ventures.
+- **Venture Settings**: Brand management (Logo, Bio, SEO URL).
 
-## 📂 Domain Documentation
-For detailed information on each system domain, see:
-- [Authentication & User Sync](docs/AUTHENTICATION.md)
-- [Shops & Products](docs/SHOPS_AND_PRODUCTS.md)
-- [Carts & Checkout](docs/CARTS_AND_CHECKOUT.md)
+## 🛠️ Technical Stack
+- **Frontend**: Next.js 16, Framer Motion, Tailwind 4, Clerk Auth, Vitest.
+- **Backend**: Django 6, DRF, PostgreSQL (Production) / SQLite (Local), Whitenoise.
+- **Auth**: Clerk (Keyless mode enabled for rapid local dev).
 
-## 🛠️ Getting Started
-### Prerequisites
-- Python 3.12+
-- Node.js 20+
+## 📖 Detailed Documentation
+- [API Reference](./docs/API_REFERENCE.md) - All endpoints and auth requirements.
+- [Authentication](./docs/AUTHENTICATION.md) - Clerk handshake and JWT logic.
+- [Shops & Products](./docs/SHOPS_AND_PRODUCTS.md) - Multi-variant architecture and SEO logic.
+- [Carts & Checkout](./docs/CARTS_AND_CHECKOUT.md) - Synchronous state management.
 
-### Setup Backend
-```bash
-cd sokoline-backend
-source env/bin/activate
-pip install -r requirements.txt
-python manage.py runserver
-```
-
-### Setup Frontend
-```bash
-cd sokoline-web
-npm install
-npm run dev
-```
+---
+*Last Updated: April 18, 2026 (Major Platform Overhaul)*

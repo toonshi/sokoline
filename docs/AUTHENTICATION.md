@@ -1,30 +1,26 @@
 # Domain: Authentication & User Sync
 
-This domain handles the integration with **Clerk** (Next.js) and the **Django Backend** using JWT (JSON Web Tokens).
+Sokoline uses **Clerk** for identity management, integrated via a specialized `proxy.ts` architecture for Next.js 16 and a custom JWT-backend for Django.
 
 ## 🚀 The Handshake
-- **Frontend (Next.js)**: Obtains a short-lived (60s) JWT token using `getToken({ template: 'django-backend' })`.
-- **Backend (Django)**: Intercepts the token, verifies it against Clerk's **JWKS endpoint**, and extracts user claims.
+1. **Frontend (Next.js)**: Obtains a short-lived (60s) JWT token from Clerk using `useAuth().getToken()`.
+2. **Authorization**: This token is injected into the `Authorization: Bearer <token>` header for all API calls in `lib/api.ts`.
+3. **Backend (Django)**: 
+   - `sokoline.authentication.ClerkAuthentication` intercepts the token.
+   - It validates the token against your Clerk JWKS endpoint.
+   - If valid, it retrieves or creates the user in the Django database.
 
-## ⚙️ Configuration
-- **Provider**: Clerk
-- **Method**: RS256 JWT
-- **JWKS URL**: `https://needed-wahoo-23.clerk.accounts.dev/.well-known/jwks.json`
-- **Django Auth Class**: `sokoline.authentication.ClerkAuthentication`
+## 🛠️ Middleware Strategy (`proxy.ts`)
+Unlike standard Next.js projects using `middleware.ts`, Sokoline uses **`proxy.ts`** to handle Clerk's authentication logic. This is optimized for Node.js runtimes and prevents the common "Infinite Redirect Loop" by explicitly managing session refreshes.
 
-## 📦 Data Sync (Clerk -> Django)
-On every authenticated request, the backend automatically syncs the following from the Clerk JWT:
-- `sub` (Clerk ID) -> `User.username`
-- `email` -> `User.email`
-- `first_name` -> `User.first_name`
-- `last_name` -> `User.last_name`
+## 🔑 Development Modes
+- **Keyless Mode**: Enabled by default for local development. Clerk auto-generates a temporary instance in the `.clerk/` directory (DO NOT COMMIT).
+- **Production Mode**: Uses `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` pointing to the official `needed-wahoo-23` instance.
 
-## 🧪 Testing the Domain
-### Frontend Manual Test
-1. Go to `http://localhost:3000/test`.
-2. Click **"Verify with Django Backend"**.
-3. Success: A JSON response with your profile data is returned from Django.
+## 🛡️ Security Rules
+- **Public Routes**: `/api/products/`, `/api/shops/`, `/api/tags/`.
+- **Protected Routes**: `/api/cart/`, `/api/orders/`, and all `POST/PATCH/DELETE` actions on inventory.
+- **Ownership**: The backend strictly validates that users can only edit products belonging to a `Shop` they personally own.
 
-### Backend Automated Tests
-- `sokoline.authentication.ClerkAuthentication`: Verifies token signature and expiration.
-- `UserViewSet.me`: Returns the current authenticated user's profile.
+---
+*Last Updated: April 18, 2026*
