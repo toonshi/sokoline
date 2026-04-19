@@ -213,11 +213,12 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user).prefetch_related('items__product')
 
-    @action(detail=True, methods=['get'])
-    def payment_status(self, request, pk=None):
-        order = self.get_object()
-        return Response({
-            'id': order.id,
-            'payment_status': order.payment_status,
-            'status': order.status
-        })
+    @action(detail=False, methods=['get'])
+    def shop_orders(self, request):
+        # Return orders that contain products belonging to the current user's shop
+        queryset = Order.objects.filter(
+            items__product__shop__owner=request.user
+        ).distinct().prefetch_related('items__product')
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

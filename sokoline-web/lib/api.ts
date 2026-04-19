@@ -232,3 +232,15 @@ export async function fetchOrders(token: string): Promise<Order[]> {
     return [];
   }
 }
+
+export async function fetchShopOrders(token: string): Promise<Order[]> {
+  try {
+    const response = await authenticatedFetch("/orders/shop_orders/", token);
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data.results || data;
+  } catch (error) {
+    console.error("Error fetching shop orders:", error);
+    return [];
+  }
+}

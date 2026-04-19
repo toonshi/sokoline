@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Store, Package, ArrowLeft, PlusCircle } from "lucide-react";
+import { LayoutDashboard, Store, Package, ArrowLeft, ShoppingCart } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -12,48 +12,49 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "My Shop", href: "/dashboard/my-shop", icon: Store },
     { name: "Inventory", href: "/dashboard/products", icon: Package },
+    { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
   ];
 
   return (
-    <div className="flex min-h-screen bg-muted text-foreground dark:bg-background">
+    <div className="flex min-h-screen bg-zinc-50 text-foreground">
       {/* Sidebar */}
-      <aside className="hidden h-screen w-72 shrink-0 flex-col border-r border-border bg-background lg:sticky lg:top-0 lg:flex">
-        <div className="px-8 pb-6 pt-8">
-          <Link href="/" className="text-2xl font-black tracking-tight">
-            Sokoline
+      <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-zinc-200 bg-white lg:sticky lg:top-0 lg:flex">
+        <div className="px-6 pb-6 pt-6">
+          <Link href="/" className="text-xl font-bold tracking-tight text-zinc-900">
+            sokoline
           </Link>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-            Seller Dashboard
+          <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+            Seller Admin
           </p>
         </div>
 
-        <nav className="flex-1 space-y-1 px-4">
+        <nav className="flex-1 space-y-0.5 px-3">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
+                className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-zinc-100 text-zinc-900 shadow-sm"
+                    : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
                 }`}
               >
-                <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                <item.icon size={16} strokeWidth={isActive ? 2.5 : 2} />
                 {item.name}
               </Link>
             );
           })}
         </nav>
 
-        <div className="mt-auto p-4">
+        <div className="mt-auto p-4 border-t border-zinc-100">
           <Link 
             href="/" 
-            className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
           >
             <ArrowLeft size={16} />
-            Exit Dashboard
+            Back to store
           </Link>
         </div>
       </aside>
@@ -61,19 +62,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Header */}
-        <header className="flex h-16 items-center justify-between border-b border-border bg-background px-5 lg:hidden">
-           <span className="text-base font-bold tracking-tight">Sokoline</span>
-           <Link
-             href="/dashboard/products"
-             aria-label="Add product"
-             className="rounded-lg bg-foreground p-2 text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sokoline-accent focus-visible:ring-offset-2"
-           >
-             <PlusCircle size={18} />
+        <header className="flex h-14 items-center justify-between border-b border-zinc-200 bg-white px-5 lg:hidden">
+           <span className="text-sm font-bold tracking-tight">sokoline admin</span>
+           <Link href="/dashboard" className="text-zinc-400 hover:text-zinc-900">
+              <LayoutDashboard size={20} />
            </Link>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-5 md:p-8 lg:p-10">
-          <div className="mx-auto max-w-7xl">
+        <main className="flex-1 overflow-y-auto p-6 md:p-10 bg-zinc-50/50">
+          <div className="mx-auto max-w-6xl">
             {children}
           </div>
         </main>
