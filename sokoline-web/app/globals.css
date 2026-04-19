@@ -44,13 +44,13 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Sokoline specific accents */
-  --color-sokoline-accent: oklch(0.556 0.222 284.444); /* Equivalent to #7C3AED */
-  --color-sokoline-accent-hover: oklch(0.488 0.243 284.444); /* Equivalent to #6D28D9 */ --font-heading: var(--font-sans); --radius-2xl: calc(var(--radius) * 1.8); --radius-3xl: calc(var(--radius) * 2.2); --radius-4xl: calc(var(--radius) * 2.6);
+  /* PRISTINE specific accents (Teal) */
+  --color-sokoline-accent: oklch(0.648 0.15 174.45); /* Equivalent to #14b8a6 (teal-500) */
+  --color-sokoline-accent-hover: oklch(0.55 0.15 174.45); /* Equivalent to #0f766e (teal-700) */ --font-heading: var(--font-sans); --radius-2xl: calc(var(--radius) * 1.8); --radius-3xl: calc(var(--radius) * 2.2); --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem; /* rounded-xl by default */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);

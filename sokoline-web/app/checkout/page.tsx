@@ -60,10 +60,9 @@ export default function CheckoutPage() {
 
   if (!isSignedIn) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <h1 className="text-2xl font-semibold text-foreground">Authentication Required</h1>
-        <p className="text-muted-foreground text-sm">Please sign in to complete your purchase.</p>
-        <Link href="/sign-in" className="bg-sokoline-accent text-white px-6 py-2.5 rounded-md font-medium text-sm transition-colors hover:bg-sokoline-accent/90">Sign In</Link>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center">
+        <h1 className="text-3xl font-bold text-gray-900">Sign in to checkout</h1>
+        <Link href="/sign-in" className="bg-teal-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-teal-700 transition-colors">Log In</Link>
       </div>
     );
   }
@@ -97,12 +96,12 @@ export default function CheckoutPage() {
   if (isSuccess) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
-        <div className="h-16 w-16 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-6">
-          <CheckCircle2 size={32} />
+        <div className="h-20 w-20 rounded-xl bg-green-50 flex items-center justify-center text-green-600 mb-8 border border-green-100 shadow-sm">
+          <CheckCircle2 size={48} />
         </div>
-        <h1 className="text-2xl font-semibold text-foreground mb-2">Order Confirmed</h1>
-        <p className="text-muted-foreground max-w-sm text-sm">
-          Your payment was successful. We've sent a confirmation to your email. Redirecting you to your orders...
+        <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Payment confirmed</h1>
+        <p className="text-gray-500 max-w-sm text-lg font-medium">
+          Your order has been placed successfully. Support more ventures while we prepare your delivery.
         </p>
       </div>
     );
@@ -111,119 +110,114 @@ export default function CheckoutPage() {
   if (!cart || cart.items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <h1 className="text-xl font-medium">Your bag is empty</h1>
-        <Link href="/products" className="text-sokoline-accent text-sm font-medium hover:underline">Continue shopping</Link>
+        <h1 className="text-xl font-bold text-gray-900">Your bag is empty</h1>
+        <Link href="/products" className="text-teal-500 font-bold hover:underline">Go shopping</Link>
       </div>
     );
   }
 
   return (
-    <main className="bg-zinc-50 min-h-screen">
-      <div className="max-w-5xl mx-auto px-4 py-8 md:py-16">
-        <Link href="/cart" className="text-sm text-muted-foreground flex items-center gap-2 mb-8 hover:text-foreground transition-colors group">
-          <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Back to bag
-        </Link>
+    <main className="max-w-7xl mx-auto px-6 mb-20">
+      <div className="mt-6 py-4 border-b border-gray-200">
+          <Link href="/cart" className="text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors flex items-center gap-2 uppercase tracking-widest group">
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to bag
+          </Link>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column: Payment Information */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-8">
-              <h2 className="text-lg font-semibold text-foreground mb-6">Payment Method</h2>
-              
-              {pollingStatus === "pending" ? (
-                <div className="bg-zinc-50 rounded-md p-10 border border-zinc-100 flex flex-col items-center text-center gap-4">
-                  <Loader2 size={32} className="animate-spin text-sokoline-accent" />
-                  <div>
-                    <h3 className="text-base font-medium text-foreground">Waiting for confirmation</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Please enter your M-Pesa PIN on your phone to complete the transaction.</p>
-                  </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mt-8">
+        {/* Payment Column */}
+        <div className="lg:col-span-3">
+          <div className="bg-gray-100 rounded-xl p-8 space-y-8">
+            <h2 className="text-3xl font-bold text-gray-900">Secure Payment</h2>
+            
+            {pollingStatus === "pending" ? (
+              <div className="bg-white rounded-xl p-12 border border-gray-200 flex flex-col items-center text-center gap-6 shadow-sm">
+                <Loader2 size={48} className="animate-spin text-teal-500" />
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Awaiting your PIN</h3>
+                  <p className="text-gray-500 font-medium mt-2">Enter your M-Pesa PIN on your phone to complete the transaction.</p>
                 </div>
-              ) : (
-                <form onSubmit={handleCheckout} className="space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="phone" className="text-xs font-medium text-zinc-600">M-Pesa Phone Number</label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
-                        <Phone size={18} />
-                      </div>
-                      <input 
-                        id="phone"
-                        type="tel"
-                        placeholder="2547XXXXXXXX"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        disabled={isProcessing}
-                        className="w-full bg-white border border-zinc-300 rounded-md py-3 pl-11 pr-4 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all"
-                      />
+              </div>
+            ) : (
+              <form onSubmit={handleCheckout} className="space-y-8">
+                <div className="space-y-3">
+                  <label htmlFor="phone" className="text-sm font-bold text-gray-500 uppercase tracking-widest">M-Pesa Phone Number</label>
+                  <div className="relative">
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                      <Phone size={20} />
                     </div>
-                    <p className="text-[11px] text-zinc-400 italic">Enter your number starting with 254</p>
+                    <input 
+                      id="phone"
+                      type="tel"
+                      placeholder="2547XXXXXXXX"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      disabled={isProcessing}
+                      className="w-full bg-white border-2 border-transparent focus:border-teal-500 rounded-xl py-4 pl-14 pr-6 text-lg font-bold text-gray-900 outline-none transition-all shadow-sm"
+                    />
                   </div>
+                  <p className="text-xs font-bold text-gray-400 italic">Please use the format 254700000000</p>
+                </div>
 
-                  {error && (
-                    <div className="bg-red-50 border border-red-100 text-red-600 rounded-md p-4 flex items-center gap-3 text-xs font-medium">
-                      <XCircle size={16} />
-                      {error}
-                    </div>
+                {error && (
+                  <div className="bg-red-50 border border-red-100 text-red-600 rounded-xl p-6 flex items-center gap-3 text-sm font-bold">
+                    <XCircle size={20} />
+                    {error}
+                  </div>
+                )}
+
+                <button 
+                  type="submit"
+                  disabled={isProcessing}
+                  className="w-full bg-teal-500 text-white py-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 hover:bg-teal-700 transition-all shadow-md disabled:opacity-50"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 size={24} className="animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      Complete Checkout
+                    </>
                   )}
+                </button>
+              </form>
+            )}
 
-                  <button 
-                    type="submit"
-                    disabled={isProcessing}
-                    className="w-full bg-sokoline-accent text-white py-3.5 rounded-md font-medium text-sm flex items-center justify-center gap-2 hover:bg-sokoline-accent/90 transition-all shadow-sm disabled:opacity-50"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        Complete Payment
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
-            </div>
-
-            <div className="flex items-center justify-center gap-2 text-zinc-400">
-               <ShieldCheck size={16} />
-               <span className="text-[11px] font-medium uppercase tracking-tight">Secure Transaction via Safaricom Daraja</span>
+            <div className="flex items-center justify-center gap-2 text-gray-400 pt-4">
+               <ShieldCheck size={18} />
+               <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verified Daraja Infrastructure</span>
             </div>
           </div>
+        </div>
 
-          {/* Right Column: Order Summary */}
-          <div className="lg:col-span-5">
-            <div className="bg-zinc-100/50 border border-zinc-200 rounded-lg p-8">
-              <h2 className="text-base font-semibold text-foreground mb-6">Order Summary</h2>
-              
-              <div className="space-y-4 mb-6">
-                {cart.items.map(item => (
-                  <div key={item.id} className="flex justify-between items-start text-sm">
-                    <div className="flex flex-col">
-                      <span className="font-medium text-zinc-800">{item.product_name}</span>
-                      <span className="text-xs text-zinc-500">Qty: {item.quantity}</span>
-                    </div>
-                    <span className="font-medium text-zinc-800">${item.total_price}</span>
+        {/* Summary Column */}
+        <div className="lg:col-span-2">
+          <div className="bg-gray-100 rounded-xl p-8 sticky top-24">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8 border-b border-gray-200 pb-4">Your order</h2>
+            
+            <div className="space-y-4 mb-8">
+              {cart.items.map(item => (
+                <div key={item.id} className="flex justify-between items-start text-sm">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-gray-900">{item.product_name}</span>
+                    <span className="text-xs text-gray-500 font-bold uppercase tracking-tighter mt-0.5">Qty: {item.quantity}</span>
                   </div>
-                ))}
+                  <span className="font-black text-gray-900">${item.total_price}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-4 pt-6 border-t border-gray-200">
+              <div className="flex justify-between text-lg font-medium text-gray-600">
+                <span>Subtotal</span>
+                <span className="font-bold text-gray-900">${cart.total_price}</span>
               </div>
-
-              <div className="space-y-3 pt-6 border-t border-zinc-200 text-sm">
-                <div className="flex justify-between text-zinc-600">
-                  <span>Subtotal</span>
-                  <span>${cart.total_price}</span>
-                </div>
-                <div className="flex justify-between text-zinc-600">
-                  <span>Shipping</span>
-                  <span className="text-[11px] font-medium uppercase text-zinc-400 italic">Calculated by vendor</span>
-                </div>
-                <div className="flex justify-between items-end pt-4 border-t border-zinc-200">
-                  <span className="font-semibold text-zinc-900">Total</span>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-zinc-900">${cart.total_price}</p>
-                    <p className="text-[10px] text-zinc-400 font-medium">USD</p>
-                  </div>
+              <div className="flex justify-between items-end pt-4">
+                <span className="text-xl font-bold text-gray-900">Total Due</span>
+                <div className="text-right">
+                  <p className="text-4xl font-black text-gray-900 leading-none">${cart.total_price}</p>
                 </div>
               </div>
             </div>

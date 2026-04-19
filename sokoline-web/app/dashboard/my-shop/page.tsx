@@ -57,12 +57,13 @@ export default function MyShopPage() {
         const updated = await updateShop(token, shop.id, formData);
         if (updated) {
           setShop(updated);
-          alert("Shop updated successfully!");
+          // Standard system alert
+          alert("Venture settings saved.");
         }
       }
     } catch (error) {
       console.error("Failed to update shop:", error);
-      alert("Update failed. Check console.");
+      alert("Error saving settings.");
     } finally {
       setSaving(false);
     }
@@ -71,18 +72,18 @@ export default function MyShopPage() {
   if (!isLoaded || loading) {
     return (
       <div className="flex items-center justify-center min-h-[40vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sokoline-accent"></div>
+        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-teal-500"></div>
       </div>
     );
   }
 
   if (!shop) {
     return (
-      <div className="text-center py-20">
-        <h2 className="text-3xl font-black uppercase mb-4">No Shop Found</h2>
-        <p className="text-muted-foreground mb-8 font-medium">You haven't created a student venture yet.</p>
-        <button className="bg-sokoline-accent text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs">
-          Launch Your Shop
+      <div className="text-center py-20 bg-gray-100 rounded-xl">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">No shop found</h2>
+        <p className="text-gray-500 mb-8 font-medium">You haven't launched your venture yet.</p>
+        <button className="bg-teal-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-700 transition-all shadow-sm">
+          Launch your venture
         </button>
       </div>
     );
@@ -91,83 +92,83 @@ export default function MyShopPage() {
   return (
     <div className="space-y-12 max-w-3xl">
       {/* Header */}
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-end border-b border-gray-200 pb-8">
         <div>
-          <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase">My Shop</h1>
-          <p className="text-muted-foreground mt-4 text-lg font-medium">
-            Define your brand and tell your venture's story.
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Shop Settings</h1>
+          <p className="text-gray-500 mt-2 font-medium">
+            Define your brand identity and venture story.
           </p>
         </div>
         <Link 
           href={`/shops/${shop.slug}`} 
-          className="p-4 rounded-2xl bg-muted border border-border text-muted-foreground hover:text-sokoline-accent transition-all"
+          className="p-3 rounded-xl bg-white border border-gray-200 text-gray-400 hover:text-teal-500 hover:border-teal-500 transition-all shadow-sm"
         >
           <ExternalLink size={20} />
         </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Basic Info */}
-        <div className="bg-card border border-border rounded-[40px] p-10 space-y-8">
+        {/* Basic Info (PRISTINE bg-gray-100 container) */}
+        <div className="bg-gray-100 rounded-xl p-8 space-y-6">
            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Venture Name</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-1">Venture Name</label>
               <input 
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="w-full px-6 py-4 rounded-2xl bg-muted border-2 border-transparent focus:border-sokoline-accent outline-none font-bold text-foreground transition-all"
-                placeholder="e.g. Campus Goggles"
+                className="w-full px-5 py-3 rounded-xl bg-white border border-gray-200 focus:border-teal-500 outline-none font-bold text-gray-900 transition-all"
+                placeholder="Name"
                 required
               />
            </div>
 
            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Public URL Slug</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-1">Public Handle</label>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-muted-foreground/50">sokoline.app/shops/</span>
+                <span className="text-sm font-bold text-gray-400">metric/shops/</span>
                 <input 
                   type="text"
                   value={formData.slug}
                   onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                  className="flex-1 px-6 py-4 rounded-2xl bg-muted border-2 border-transparent focus:border-sokoline-accent outline-none font-bold text-foreground transition-all"
-                  placeholder="campus-goggles"
+                  className="flex-1 px-5 py-3 rounded-xl bg-white border border-gray-200 focus:border-teal-500 outline-none font-bold text-gray-900 transition-all"
+                  placeholder="handle"
                   required
                 />
               </div>
            </div>
 
            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Venture Bio</label>
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-1">Venture Description</label>
               <textarea 
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="w-full px-6 py-4 rounded-2xl bg-muted border-2 border-transparent focus:border-sokoline-accent outline-none font-medium text-foreground transition-all min-h-[150px]"
-                placeholder="Tell students why they should support you..."
+                className="w-full px-5 py-3 rounded-xl bg-white border border-gray-200 focus:border-teal-500 outline-none font-medium text-gray-900 transition-all min-h-[150px] leading-relaxed"
+                placeholder="Tell your story..."
                 required
               />
            </div>
         </div>
 
-        {/* Logo Section (Placeholder) */}
-        <div className="bg-muted/50 rounded-[40px] p-10 border border-border flex flex-col items-center text-center gap-6">
-           <div className="h-24 w-24 rounded-[32px] bg-background border border-border flex items-center justify-center text-muted-foreground shadow-sm">
-              <Store size={40} />
+        {/* Media (PRISTINE bg-gray-100 container) */}
+        <div className="bg-gray-100 rounded-xl p-8 flex flex-col items-center text-center gap-6">
+           <div className="h-20 w-20 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-300 shadow-sm">
+              <Store size={32} />
            </div>
            <div>
-              <h3 className="font-bold text-foreground uppercase">Venture Logo</h3>
-              <p className="text-xs text-muted-foreground mt-1">Recommended: Square PNG/JPG, max 2MB.</p>
+              <h3 className="font-bold text-gray-900 uppercase text-xs tracking-widest">Brand Logo</h3>
+              <p className="text-xs text-gray-400 mt-1 font-medium italic">Square JPG or PNG recommended.</p>
            </div>
-           <button type="button" className="px-6 py-2.5 rounded-full border-2 border-sokoline-accent text-sokoline-accent text-xs font-black uppercase tracking-widest hover:bg-sokoline-accent hover:text-white transition-all">
-              Choose File
+           <button type="button" className="px-6 py-2 rounded-xl border border-gray-300 bg-white text-gray-600 text-xs font-bold hover:bg-gray-50 transition-all">
+              Update Logo
            </button>
         </div>
 
         {/* Submit */}
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-4">
            <button 
              type="submit"
              disabled={saving}
-             className="bg-sokoline-accent text-white px-12 py-5 rounded-[24px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-sokoline-accent-hover transition-all shadow-2xl shadow-sokoline-accent/20 active:scale-95 disabled:opacity-50"
+             className="bg-teal-500 text-white px-10 py-4 rounded-xl font-bold text-lg flex items-center gap-2 hover:bg-teal-700 transition-all shadow-md active:scale-95 disabled:opacity-50"
            >
              {saving ? (
                <>
