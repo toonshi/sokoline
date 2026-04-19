@@ -1,1 +1,3 @@
 sokoline-backend/env\nsokoline-web/node_modules\n.env*
+sokoline-web/
+sokoline-backend/
