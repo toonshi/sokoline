@@ -53,6 +53,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     lookup_field = 'slug'
+    search_fields = ['name', 'description', 'category__name', 'tags__name']
 
     def get_queryset(self):
         queryset = super().get_queryset()

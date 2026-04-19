@@ -1,16 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, Star, Filter, ArrowUpDown } from "lucide-react";
+import { ShoppingBag, Star, Filter, ArrowUpDown, SearchX } from "lucide-react";
 import { Product } from "@/lib/types";
 import { mockProducts } from "@/lib/mockProducts";
 
-async function getProducts() {
+async function getProducts(search?: string) {
   try {
     const envUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.sokoline.app").replace(/\/$/, "");
-    const res = await fetch(`${envUrl}/api/products/`, { next: { revalidate: 3600 } });
+    const queryParams = search ? `?search=${encodeURIComponent(search)}` : "";
+    const res = await fetch(`${envUrl}/api/products/${queryParams}`, { next: { revalidate: 3600 } });
     if (!res.ok) return mockProducts;
     const data = await res.json();
     const products = data.results || data;
+    
+    // If we're searching and get nothing, don't fall back to mockProducts unless we want to
+    if (search && products.length === 0) return [];
+    
     return products.length > 0 ? products : mockProducts;
   } catch (error) {
     console.error("Error fetching products page data:", error);
@@ -18,8 +23,13 @@ async function getProducts() {
   }
 }
 
-export default async function ProductsPage() {
-  const products = await getProducts();
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+}) {
+  const { search } = await searchParams;
+  const products = await getProducts(search);
 
   return (
     <main className="bg-background dark:bg-background min-h-screen transition-colors duration-300 pb-20">
@@ -29,10 +39,17 @@ export default async function ProductsPage() {
         <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
           <div className="max-w-2xl">
             <h1 className="text-5xl font-bold tracking-tight text-foreground dark:text-background mb-4 leading-none">
-              Explore <br /> <span className="text-sokoline-accent">Ventures</span>
+              {search ? (
+                <>Results for <br /> <span className="text-sokoline-accent">{search}</span></>
+              ) : (
+                <>Explore <br /> <span className="text-sokoline-accent">Ventures</span></>
+              )}
             </h1>
             <p className="text-zinc-500 dark:text-zinc-400 text-lg font-medium">
-              Curated items from student entrepreneurs across the campus. Unique, reliable, and strictly built for you.
+              {search 
+                ? `Showing ${products.length} items matching your search.` 
+                : "Curated items from student entrepreneurs across the campus. Unique, reliable, and strictly built for you."
+              }
             </p>
           </div>
           <div className="flex gap-4">
@@ -103,9 +120,24 @@ export default async function ProductsPage() {
         </div>
 
         {products.length === 0 && (
-          <div className="py-40 text-center border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-[48px]">
-            <h2 className="text-xl font-semibold text-zinc-300">No products found</h2>
-            <p className="text-zinc-500 font-medium">The marketplace is currently resting. Check back soon!</p>
+          <div className="py-40 flex flex-col items-center justify-center text-center border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-[48px] gap-6">
+            <div className="h-20 w-20 rounded-3xl bg-muted dark:bg-zinc-900 flex items-center justify-center text-muted-foreground">
+               <SearchX size={40} />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground dark:text-background uppercase tracking-tight">No products found</h2>
+              <p className="text-zinc-500 font-medium max-w-sm mt-2">
+                {search 
+                  ? `We couldn't find anything matching "${search}". Try a different term!` 
+                  : "The marketplace is currently resting. Check back soon!"
+                }
+              </p>
+            </div>
+            {search && (
+              <Link href="/products" className="text-sokoline-accent font-bold uppercase tracking-widest text-xs underline underline-offset-8 decoration-2">
+                Clear search
+              </Link>
+            )}
           </div>
         )}
 
