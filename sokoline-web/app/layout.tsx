@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { CartProvider } from "@/components/providers/CartProvider";
+import ChatSheet from "@/components/ChatSheet";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
             <main>
               {children}
             </main>
+            <ChatSheet />
           </body>
         </html>
       </CartProvider>
