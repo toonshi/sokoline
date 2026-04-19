@@ -13,18 +13,18 @@ export default function CartPage() {
   if (!isLoaded || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sokoline-accent"></div>
+        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-zinc-300"></div>
       </div>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 text-center px-6">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground leading-none">Authentication <br /> Required</h1>
-        <p className="text-muted-foreground max-w-md font-medium text-lg">Please sign in to view and manage your shopping bag.</p>
-        <Link href="/sign-in" className="bg-foreground text-background px-10 py-4 rounded-full font-bold tracking-wide text-sm hover:bg-sokoline-accent transition-all">
-          Sign In to Sokoline
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-6">
+        <h1 className="text-2xl font-semibold">Shopping Bag</h1>
+        <p className="text-zinc-500 text-sm max-w-xs">Please sign in to view and manage your cart.</p>
+        <Link href="/sign-in" className="mt-4 bg-zinc-900 text-white px-8 py-2.5 rounded-md font-medium text-sm transition-colors hover:bg-zinc-800">
+          Sign In
         </Link>
       </div>
     );
@@ -32,104 +32,119 @@ export default function CartPage() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-10 text-center px-6 animate-in fade-in duration-700">
-        <div className="h-32 w-32 rounded-[40px] bg-muted flex items-center justify-center text-muted-foreground border border-border">
-          <ShoppingBag size={56} />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-6">
+        <div className="h-16 w-16 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-300 border border-zinc-100">
+          <ShoppingBag size={28} />
         </div>
         <div>
-          <h1 className="text-5xl font-bold tracking-tight text-foreground mb-4">Empty Bag</h1>
-          <p className="text-muted-foreground font-medium text-lg">Looks like you haven't added any student ventures yet.</p>
+          <h1 className="text-xl font-semibold text-zinc-900">Your bag is empty</h1>
+          <p className="text-zinc-500 text-sm mt-1">Looks like you haven't added any student ventures yet.</p>
         </div>
-        <Link href="/products" className="text-sokoline-accent font-bold tracking-wider text-xs flex items-center gap-3 hover:opacity-70 transition-opacity">
-          <ArrowLeft size={16} /> Start Exploring
+        <Link href="/products" className="text-sokoline-accent text-sm font-medium hover:underline flex items-center gap-2">
+          <ArrowLeft size={16} /> Continue exploring
         </Link>
       </div>
     );
   }
 
   return (
-    <main className="bg-background min-h-screen pb-32">
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-20">
-        <h1 className="text-6xl font-bold tracking-tight text-foreground mb-16 leading-none">Your <br /> <span className="text-sokoline-accent">Selection</span></h1>
+    <main className="bg-zinc-50 min-h-screen pb-20">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <h1 className="text-3xl font-semibold text-zinc-900 mb-12">Shopping Bag</h1>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Item List */}
-          <div className="lg:col-span-2 space-y-12">
-            {cart.items.map((item) => (
-              <div key={item.id} className="flex gap-10 pb-12 border-b border-border items-start group">
-                <div className="relative h-48 w-40 flex-shrink-0 overflow-hidden rounded-[32px] bg-muted border border-border transition-all duration-500 group-hover:shadow-xl group-hover:shadow-sokoline-accent/10">
-                   <div className="flex items-center justify-center h-full text-muted-foreground">
-                     <ShoppingBag size={48} />
+          <div className="lg:col-span-8 space-y-6">
+            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm overflow-hidden">
+               <div className="divide-y divide-zinc-100">
+                 {cart.items.map((item) => (
+                   <div key={item.id} className="p-6 flex gap-6 items-start group transition-colors hover:bg-zinc-50/50">
+                     <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50">
+                        <div className="flex items-center justify-center h-full text-zinc-200">
+                          <ShoppingBag size={32} />
+                        </div>
+                     </div>
+                     
+                     <div className="flex-1 flex flex-col min-w-0">
+                       <div className="flex justify-between items-start gap-4">
+                         <div>
+                           <h3 className="text-sm font-semibold text-zinc-900 line-clamp-1">{item.product_name}</h3>
+                           <p className="text-xs text-zinc-500 mt-1 uppercase tracking-tighter font-medium">${item.unit_price} each</p>
+                         </div>
+                         <button 
+                           onClick={() => removeItem(item.id)}
+                           className="text-zinc-400 hover:text-red-600 transition-colors p-1"
+                           title="Remove item"
+                         >
+                           <Trash2 size={16} />
+                         </button>
+                       </div>
+                       
+                       <div className="flex justify-between items-center mt-auto pt-4">
+                         <div className="flex items-center border border-zinc-200 rounded-md bg-white">
+                           <button 
+                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                             className="px-3 py-1.5 text-zinc-400 hover:text-zinc-900 transition-colors border-r border-zinc-200"
+                           >
+                             <Minus size={14} />
+                           </button>
+                           <span className="text-xs font-semibold text-zinc-900 px-4 min-w-[40px] text-center">{item.quantity}</span>
+                           <button 
+                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                             className="px-3 py-1.5 text-zinc-400 hover:text-zinc-900 transition-colors border-l border-zinc-200"
+                           >
+                             <Plus size={14} />
+                           </button>
+                         </div>
+                         <span className="text-sm font-bold text-zinc-900">${item.total_price}</span>
+                       </div>
+                     </div>
                    </div>
-                </div>
-                
-                <div className="flex flex-col flex-1 pt-2">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-2xl font-bold text-foreground">{item.product_name}</h3>
-                    <button 
-                      onClick={() => removeItem(item.id)}
-                      className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                  
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-auto">Unit: ${item.unit_price}</p>
-                  
-                  <div className="flex justify-between items-center mt-10">
-                    <div className="flex items-center gap-6 bg-muted px-6 py-3 rounded-2xl border border-border">
-                      <button 
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="text-sokoline-accent hover:scale-125 transition-transform"
-                      >
-                        <Minus size={18} />
-                      </button>
-                      <span className="font-bold text-foreground text-lg min-w-[30px] text-center">{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="text-sokoline-accent hover:scale-125 transition-transform"
-                      >
-                        <Plus size={18} />
-                      </button>
-                    </div>
-                    <span className="text-2xl font-bold text-foreground tracking-tight">${item.total_price}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+                 ))}
+               </div>
+            </div>
+            
+            <Link href="/products" className="inline-flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-zinc-900">
+               <ArrowLeft size={14} /> Back to shopping
+            </Link>
           </div>
 
           {/* Summary */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-32 bg-muted/30 p-10 rounded-[48px] border border-border shadow-sm">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground mb-8">Total</h2>
+          <div className="lg:col-span-4">
+            <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm sticky top-24">
+              <h2 className="text-base font-semibold text-zinc-900 mb-6">Order Summary</h2>
               
-              <div className="space-y-6 mb-10 pb-10 border-b border-border">
-                <div className="flex justify-between font-semibold text-muted-foreground uppercase text-[10px] tracking-wider">
-                  <span>Subtotal</span>
-                  <span className="text-foreground text-sm font-bold">${cart.total_price}</span>
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between text-sm">
+                  <span className="text-zinc-500">Subtotal</span>
+                  <span className="font-medium text-zinc-900">${cart.total_price}</span>
                 </div>
-                <div className="flex justify-between font-semibold text-muted-foreground uppercase text-[10px] tracking-wider">
-                  <span>Shipping</span>
-                  <span className="text-sokoline-accent text-sm font-bold">Complimentary</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-zinc-500">Shipping</span>
+                  <span className="text-[11px] font-bold uppercase text-green-700 tracking-tighter">Free on campus</span>
                 </div>
-              </div>
-              
-              <div className="flex justify-between items-end mb-12">
-                <span className="font-bold text-muted-foreground uppercase tracking-widest text-[10px]">Grand Total</span>
-                <span className="text-4xl font-bold text-foreground tracking-tight leading-none">${cart.total_price}</span>
+                <div className="h-px bg-zinc-100 my-4" />
+                <div className="flex justify-between items-end">
+                  <span className="text-sm font-semibold text-zinc-900">Total</span>
+                  <div className="text-right">
+                    <span className="text-xl font-bold text-zinc-900">${cart.total_price}</span>
+                    <p className="text-[10px] text-zinc-400 font-medium uppercase tracking-tighter">USD</p>
+                  </div>
+                </div>
               </div>
               
               <Link 
                 href="/checkout"
-                className="w-full bg-foreground text-background py-5 rounded-full font-bold tracking-wider text-xs flex items-center justify-center gap-3 hover:bg-sokoline-accent transition-all shadow-2xl active:scale-95"
+                className="w-full bg-zinc-900 text-white py-3.5 rounded-md font-semibold text-sm flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all shadow-sm active:scale-[0.98]"
               >
-                Checkout <ArrowRight size={20} />
+                Proceed to Checkout <ArrowRight size={16} />
               </Link>
               
-              <p className="mt-8 text-[9px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-relaxed">
-                Secure student-to-student transactions. <br /> Powered by Sokoline Infrastructure.
-              </p>
+              <div className="mt-6 flex flex-col gap-2">
+                 <p className="text-[10px] text-zinc-400 text-center leading-relaxed">
+                    By proceeding to checkout you agree to our student commerce policies. All transactions are protected via M-Pesa.
+                 </p>
+              </div>
             </div>
           </div>
         </div>
