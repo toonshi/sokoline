@@ -5,6 +5,7 @@ import AnimatedText from "./AnimatedText";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Show } from "@clerk/nextjs";
 
 export default function HeroSection() {
   return (
@@ -37,9 +38,16 @@ export default function HeroSection() {
               <Link href="/products" className="group inline-flex items-center gap-2 rounded-md bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800">
                 Browse Marketplace <ArrowRight size={16} strokeWidth={1.5} className="transition-transform group-hover:translate-x-0.5" />
               </Link>
-              <Link href="/sign-up" className="inline-flex items-center rounded-md border border-zinc-200 px-5 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50">
-                Register Venture
-              </Link>
+              <Show when="signed-in">
+                <Link href="/dashboard" className="inline-flex items-center rounded-md border border-zinc-200 px-5 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50">
+                  Open your shop
+                </Link>
+              </Show>
+              <Show when="signed-out">
+                <Link href="/sign-up" className="inline-flex items-center rounded-md border border-zinc-200 px-5 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50">
+                  Open your shop
+                </Link>
+              </Show>
             </div>
 
             <div className="flex flex-wrap items-center gap-8 border-t border-zinc-100 pt-8">

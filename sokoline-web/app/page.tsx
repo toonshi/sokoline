@@ -4,8 +4,10 @@ import Link from "next/link";
 import { getProducts } from "@/lib/api";
 import { mockProducts } from "@/lib/mockProducts";
 import { ShoppingBag, ArrowRight, ShieldCheck, Zap, BarChart3, Star } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function Home() {
+  const { userId } = await auth();
   const products = await getProducts({ limit: "4" });
   const featuredProducts = products.length > 0 ? products : mockProducts.slice(0, 4);
 
@@ -82,7 +84,7 @@ export default async function Home() {
             <div className="h-10 w-10 rounded bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-600">
                <BarChart3 size={20} />
             </div>
-            <h3 className="text-base font-semibold text-zinc-900">Venture Analytics</h3>
+            <h3 className="text-base font-semibold tracking-tight text-zinc-900">Venture Analytics</h3>
             <p className="text-xs leading-relaxed text-zinc-500">
               Complete inventory control and revenue tracking for student-led businesses.
             </p>
@@ -91,7 +93,7 @@ export default async function Home() {
             <div className="h-10 w-10 rounded bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-600">
                <Zap size={20} />
             </div>
-            <h3 className="text-base font-semibold text-zinc-900">M-Pesa Integration</h3>
+            <h3 className="text-base font-semibold tracking-tight text-zinc-900">M-Pesa Integration</h3>
             <p className="text-xs leading-relaxed text-zinc-500">
               Native Daraja STK Push for instant, secure mobile payments across campus.
             </p>
@@ -100,7 +102,7 @@ export default async function Home() {
             <div className="h-10 w-10 rounded bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-600">
                <ShieldCheck size={20} />
             </div>
-            <h3 className="text-base font-semibold text-zinc-900">Campus Verification</h3>
+            <h3 className="text-base font-semibold tracking-tight text-zinc-900">Campus Verification</h3>
             <p className="text-xs leading-relaxed text-zinc-500">
               Standardized security layers protecting every student founder and buyer.
             </p>
@@ -122,8 +124,11 @@ export default async function Home() {
               Join the unified campus commerce infrastructure. Open your shop in minutes and reach thousands of students.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
-              <Link href="/sign-up" className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-zinc-900 transition-colors hover:bg-zinc-100">
-                Get Started
+              <Link 
+                href={userId ? "/dashboard" : "/sign-up"} 
+                className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-zinc-900 transition-colors hover:bg-zinc-100"
+              >
+                Open your shop
               </Link>
               <Link href="/shops" className="rounded-md border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800">
                 View All Vendors
