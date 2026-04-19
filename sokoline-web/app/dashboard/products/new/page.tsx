@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { fetchMyShop, getCategories, createProduct } from "@/lib/api";
 import { Category } from "@/lib/types";
-import { ArrowLeft, Save, Loader2, Package, Tag, DollarSign, ListTree } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Package, Tag, DollarSign, ListTree, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 export default function NewProductPage() {
@@ -69,11 +69,11 @@ export default function NewProductPage() {
         if (product) {
           router.push("/dashboard/products");
         } else {
-          setError("Failed to create product. Please check your inputs.");
+          setError("Failed to create product. Please verify your inputs.");
         }
       }
     } catch (err: any) {
-      setError(err.message || "An error occurred.");
+      setError(err.message || "An error occurred while saving.");
     } finally {
       setIsSubmitting(false);
     }
@@ -82,159 +82,144 @@ export default function NewProductPage() {
   if (!isLoaded || !isSignedIn) return null;
 
   return (
-    <main className="bg-background min-h-screen">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <Link href="/dashboard/products" className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-12 hover:text-sokoline-accent transition-colors">
-          <ArrowLeft size={14} /> Back to Inventory
+    <main className="bg-zinc-50 min-h-screen pb-20">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <Link href="/dashboard/products" className="text-sm text-muted-foreground flex items-center gap-2 mb-8 hover:text-foreground transition-colors group">
+          <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Products
         </Link>
 
-        <div className="flex justify-between items-end mb-12">
-          <div>
-            <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase">List New Product</h1>
-            <p className="text-muted-foreground mt-4 text-lg font-medium">Add a new student venture product to your shop.</p>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-semibold text-foreground">Add product</h1>
+          <div className="flex gap-3">
+             <Link href="/dashboard/products" className="px-4 py-2 bg-white border border-zinc-300 rounded-md text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+               Cancel
+             </Link>
+             <button 
+               onClick={handleSubmit}
+               disabled={isSubmitting || !shopId}
+               className="px-4 py-2 bg-sokoline-accent text-white rounded-md text-sm font-medium hover:bg-sokoline-accent/90 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+             >
+               {isSubmitting && <Loader2 size={14} className="animate-spin" />}
+               Save product
+             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Column: Basic Info */}
-            <div className="space-y-8">
-              <div className="bg-card rounded-[32px] border border-border p-8 space-y-6">
-                 <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-3">
-                   <Package size={20} className="text-sokoline-accent" /> Basic Info
-                 </h2>
-                 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Product Name</label>
-                   <input 
-                     required
-                     value={formData.name}
-                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                     className="w-full bg-background border border-border rounded-2xl py-4 px-6 font-bold outline-none focus:ring-2 focus:ring-sokoline-accent"
-                     placeholder="e.g. Vintage Leather Bag"
-                   />
-                 </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Form Content */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6 space-y-4">
+               <div className="space-y-1.5">
+                 <label className="text-sm font-medium text-zinc-700">Title</label>
+                 <input 
+                   required
+                   value={formData.name}
+                   onChange={(e) => setFormData({...formData, name: e.target.value})}
+                   className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
+                   placeholder="Short sleeve t-shirt"
+                 />
+               </div>
 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Description</label>
-                   <textarea 
-                     required
-                     rows={4}
-                     value={formData.description}
-                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                     className="w-full bg-background border border-border rounded-2xl py-4 px-6 font-medium outline-none focus:ring-2 focus:ring-sokoline-accent"
-                     placeholder="Tell the story of your product..."
-                   />
-                 </div>
-              </div>
-
-              <div className="bg-card rounded-[32px] border border-border p-8 space-y-6">
-                 <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-3">
-                   <ListTree size={20} className="text-sokoline-accent" /> Classification
-                 </h2>
-                 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Category</label>
-                   <select 
-                     required
-                     value={formData.category}
-                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                     className="w-full bg-background border border-border rounded-2xl py-4 px-6 font-bold outline-none focus:ring-2 focus:ring-sokoline-accent appearance-none"
-                   >
-                     <option value="">Select a category</option>
-                     {categories.map(cat => (
-                       <option key={cat.id} value={cat.id}>{cat.name}</option>
-                     ))}
-                   </select>
-                 </div>
-              </div>
+               <div className="space-y-1.5">
+                 <label className="text-sm font-medium text-zinc-700">Description</label>
+                 <textarea 
+                   required
+                   rows={6}
+                   value={formData.description}
+                   onChange={(e) => setFormData({...formData, description: e.target.value})}
+                   className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
+                   placeholder="Describe your product in detail..."
+                 />
+               </div>
             </div>
 
-            {/* Right Column: Price & Stock */}
-            <div className="space-y-8">
-               <div className="bg-card rounded-[32px] border border-border p-8 space-y-6">
-                 <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-3">
-                   <DollarSign size={20} className="text-sokoline-accent" /> Pricing & Inventory
-                 </h2>
-                 
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Base Price</label>
+            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6">
+               <h3 className="text-sm font-semibold text-foreground mb-4">Pricing & Inventory</h3>
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-zinc-700">Price (USD)</label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</div>
                       <input 
                         required
                         type="number"
                         step="0.01"
                         value={formData.price}
                         onChange={(e) => setFormData({...formData, price: e.target.value})}
-                        className="w-full bg-background border border-border rounded-2xl py-4 px-6 font-bold outline-none focus:ring-2 focus:ring-sokoline-accent"
+                        className="w-full bg-white border border-zinc-300 rounded-md py-2 pl-7 pr-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all"
                         placeholder="0.00"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Stock</label>
-                      <input 
-                        required
-                        type="number"
-                        value={formData.stock}
-                        onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                        className="w-full bg-background border border-border rounded-2xl py-4 px-6 font-bold outline-none focus:ring-2 focus:ring-sokoline-accent"
-                        placeholder="0"
-                      />
-                    </div>
-                 </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-zinc-700">Quantity</label>
+                    <input 
+                      required
+                      type="number"
+                      value={formData.stock}
+                      onChange={(e) => setFormData({...formData, stock: e.target.value})}
+                      className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all"
+                      placeholder="0"
+                    />
+                  </div>
                </div>
+            </div>
 
-               <div className="bg-card rounded-[32px] border border-border p-8 space-y-6">
-                 <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-3">
-                   <Tag size={20} className="text-sokoline-accent" /> Additional Details
-                 </h2>
-                 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Shipping Info</label>
+            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6">
+               <h3 className="text-sm font-semibold text-foreground mb-4">Shipping & Returns</h3>
+               <div className="space-y-4">
+                 <div className="space-y-1.5">
+                   <label className="text-sm font-medium text-zinc-700">Shipping Policy</label>
                    <input 
                      value={formData.shipping_info}
                      onChange={(e) => setFormData({...formData, shipping_info: e.target.value})}
-                     className="w-full bg-background border border-border rounded-2xl py-4 px-6 font-medium outline-none focus:ring-2 focus:ring-sokoline-accent"
-                     placeholder="e.g. Pick up at Juja Gate"
+                     className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
+                     placeholder="e.g. Ships within 24 hours"
                    />
                  </div>
-
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Return Policy</label>
+                 <div className="space-y-1.5">
+                   <label className="text-sm font-medium text-zinc-700">Return Policy</label>
                    <input 
                      value={formData.return_policy}
                      onChange={(e) => setFormData({...formData, return_policy: e.target.value})}
-                     className="w-full bg-background border border-border rounded-2xl py-4 px-6 font-medium outline-none focus:ring-2 focus:ring-sokoline-accent"
-                     placeholder="e.g. Returns within 2 days"
+                     className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
+                     placeholder="e.g. 30-day money back guarantee"
                    />
                  </div>
                </div>
-
-               {error && (
-                 <div className="bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl p-6 font-bold text-sm">
-                   {error}
-                 </div>
-               )}
-
-               <button 
-                 type="submit"
-                 disabled={isSubmitting || !shopId}
-                 className="w-full bg-sokoline-accent text-white py-6 rounded-[24px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-sokoline-accent-hover transition-all shadow-2xl shadow-sokoline-accent/20 active:scale-95 disabled:opacity-50"
-               >
-                 {isSubmitting ? (
-                   <>
-                     <Loader2 size={24} className="animate-spin" />
-                     Publishing...
-                   </>
-                 ) : (
-                   <>
-                     Publish Product <Save size={20} />
-                   </>
-                 )}
-               </button>
             </div>
           </div>
-        </form>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6">
+               <h3 className="text-sm font-semibold text-foreground mb-4">Organization</h3>
+               <div className="space-y-1.5">
+                 <label className="text-sm font-medium text-zinc-700">Category</label>
+                 <div className="relative">
+                    <select 
+                      required
+                      value={formData.category}
+                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      className="w-full bg-white border border-zinc-300 rounded-md py-2 pl-3 pr-10 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="">Select category</option>
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" size={14} />
+                 </div>
+               </div>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-100 text-red-600 rounded-md p-4 text-xs font-medium">
+                {error}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );

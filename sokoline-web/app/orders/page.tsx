@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from "@clerk/nextjs";
 import { fetchOrders } from "@/lib/api";
 import { Order } from "@/lib/types";
-import { Package, Clock, CheckCircle2, XCircle, ShoppingBag, MessageSquare } from "lucide-react";
+import { Package, Clock, CheckCircle2, XCircle, ShoppingBag, MessageSquare, ChevronRight } from "lucide-react";
 import Link from 'next/link';
 import ReviewModal from '@/components/ReviewModal';
 
@@ -41,17 +41,17 @@ export default function OrdersPage() {
   if (!isLoaded || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sokoline-accent"></div>
+        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-zinc-300"></div>
       </div>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center">
-        <h1 className="text-4xl font-black uppercase tracking-tighter">Purchase History</h1>
-        <p className="text-zinc-500 font-medium max-w-sm">Sign in to track your student venture purchases.</p>
-        <Link href="/sign-in" className="bg-sokoline-accent text-white px-8 py-3 rounded-full font-bold">Sign In</Link>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+        <h1 className="text-2xl font-semibold">Orders</h1>
+        <p className="text-zinc-500 text-sm max-w-xs">Please sign in to view your order history.</p>
+        <Link href="/sign-in" className="bg-zinc-900 text-white px-6 py-2 rounded-md font-medium text-sm transition-colors hover:bg-zinc-800">Sign In</Link>
       </div>
     );
   }
@@ -62,101 +62,96 @@ export default function OrdersPage() {
   };
 
   return (
-    <main className="bg-background dark:bg-background min-h-screen pb-32">
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-12">
-        <div className="flex justify-between items-end mb-16">
-          <div>
-            <h1 className="text-5xl font-black tracking-tighter text-foreground dark:text-background uppercase">Your Orders</h1>
-            <p className="text-zinc-500 font-medium mt-2">Tracking your support for campus entrepreneurs.</p>
-          </div>
-          <div className="hidden md:block bg-[#F5F3FF] dark:bg-[#1E1B4B] px-6 py-3 rounded-2xl border border-sokoline-accent/10">
-            <span className="text-xs font-black uppercase tracking-widest text-sokoline-accent">{orders.length} total orders</span>
-          </div>
+    <main className="bg-zinc-50 min-h-screen pb-20">
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="mb-10">
+          <h1 className="text-3xl font-semibold text-zinc-900">Orders</h1>
+          <p className="text-zinc-500 text-sm mt-1">Manage your orders and track your purchases.</p>
         </div>
 
         {orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-[48px] text-center px-6">
-             <div className="h-20 w-20 rounded-3xl bg-muted flex items-center justify-center text-zinc-300 mb-8">
-               <Package size={40} />
+          <div className="flex flex-col items-center justify-center py-24 bg-white border border-dashed border-zinc-200 rounded-lg text-center px-6">
+             <div className="h-12 w-12 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-300 mb-4">
+               <Package size={24} />
              </div>
-             <h2 className="text-3xl font-bold text-foreground dark:text-background uppercase mb-2">No orders yet</h2>
-             <p className="text-zinc-500 mb-8 max-w-xs font-medium">Time to explore the marketplace and support some student ventures.</p>
-             <Link href="/products" className="bg-foreground dark:bg-background text-white dark:text-foreground px-10 py-4 rounded-full font-black uppercase tracking-widest text-sm shadow-xl transition-transform active:scale-95">
-               Browse Products
+             <h2 className="text-lg font-medium text-zinc-900">No orders found</h2>
+             <p className="text-zinc-500 text-sm mb-6 max-w-xs">You haven't placed any orders yet. Once you do, they'll appear here.</p>
+             <Link href="/products" className="bg-zinc-900 text-white px-6 py-2 rounded-md font-medium text-sm hover:bg-zinc-800 transition-colors">
+               Start shopping
              </Link>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {orders.map((order) => (
-              <div key={order.id} className="bg-muted dark:bg-zinc-900/40 rounded-[32px] border border-zinc-100 dark:border-zinc-800 overflow-hidden">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-8 bg-background dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800 gap-6">
-                   <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+              <div key={order.id} className="bg-white border border-zinc-200 rounded-lg shadow-sm overflow-hidden">
+                <div className="flex flex-wrap justify-between items-center p-6 bg-zinc-50/50 border-b border-zinc-200 gap-4">
+                   <div className="flex flex-wrap gap-8 text-sm">
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1">Order ID</span>
-                        <span className="font-bold text-foreground dark:text-background">#SKL-{order.id.toString().padStart(5, '0')}</span>
+                        <p className="text-zinc-500 text-[11px] font-semibold uppercase tracking-wider mb-1">Order #</p>
+                        <p className="font-medium text-zinc-900">SKL-{order.id.toString().padStart(5, '0')}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1">Date</span>
-                        <span className="font-bold text-foreground dark:text-background">{new Date(order.created_at).toLocaleDateString()}</span>
+                        <p className="text-zinc-500 text-[11px] font-semibold uppercase tracking-wider mb-1">Date</p>
+                        <p className="font-medium text-zinc-900">{new Date(order.created_at).toLocaleDateString()}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1">Total</span>
-                        <span className="font-black text-foreground dark:text-background">${order.total_price}</span>
+                        <p className="text-zinc-500 text-[11px] font-semibold uppercase tracking-wider mb-1">Total</p>
+                        <p className="font-medium text-zinc-900">${order.total_price}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block mb-1">Status</span>
-                        <div className="flex items-center gap-1.5">
+                        <p className="text-zinc-500 text-[11px] font-semibold uppercase tracking-wider mb-1">Status</p>
+                        <div className="flex items-center gap-1.5 pt-0.5">
                            {order.status === 'COMPLETED' ? (
-                             <>
-                               <CheckCircle2 size={14} className="text-green-500" />
-                               <span className="text-xs font-black uppercase tracking-tighter text-green-500">Delivered</span>
-                             </>
+                             <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-green-50 text-green-700 border border-green-100">
+                               Delivered
+                             </span>
                            ) : order.status === 'CANCELLED' ? (
-                             <>
-                               <XCircle size={14} className="text-red-500" />
-                               <span className="text-xs font-black uppercase tracking-tighter text-red-500">Cancelled</span>
-                             </>
+                             <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-red-50 text-red-700 border border-red-100">
+                               Cancelled
+                             </span>
                            ) : (
-                             <>
-                               <Clock size={14} className="text-sokoline-accent" />
-                               <span className="text-xs font-black uppercase tracking-tighter text-sokoline-accent">Processing</span>
-                             </>
+                             <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-600 border border-zinc-200">
+                               Processing
+                             </span>
                            )}
                         </div>
                       </div>
                    </div>
-                   <button className="text-xs font-black uppercase tracking-widest text-sokoline-accent hover:opacity-70 transition-opacity border-b border-transparent hover:border-sokoline-accent">
-                      Download Invoice
-                   </button>
+                   <div className="flex items-center gap-4">
+                      <button className="text-xs font-medium text-sokoline-accent hover:underline">
+                         View Details
+                      </button>
+                      <button className="text-xs font-medium text-zinc-500 hover:text-zinc-900">
+                         Invoice
+                      </button>
+                   </div>
                 </div>
                 
-                <div className="p-8">
-                   <div className="space-y-6">
-                      {order.items.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between">
-                           <div className="flex items-center gap-4">
-                              <div className="h-12 w-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
-                                 <ShoppingBag size={20} />
-                              </div>
-                              <div>
-                                 <span className="font-bold text-foreground dark:text-background uppercase text-sm block">{item.product_name}</span>
-                                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Qty: {item.quantity}</span>
-                              </div>
+                <div className="divide-y divide-zinc-100">
+                   {order.items.map((item) => (
+                     <div key={item.id} className="p-6 flex items-center justify-between group">
+                        <div className="flex items-center gap-4">
+                           <div className="h-14 w-14 rounded-md border border-zinc-200 bg-zinc-50 flex items-center justify-center text-zinc-300 overflow-hidden shrink-0">
+                              <ShoppingBag size={20} />
                            </div>
-                           <div className="flex items-center gap-8">
-                              <span className="font-bold text-foreground dark:text-background">${item.price}</span>
-                              {order.status === 'COMPLETED' && item.product && (
-                                <button 
-                                  onClick={() => handleReviewClick({ id: item.product!, name: item.product_name })}
-                                  className="flex items-center gap-2 bg-sokoline-accent/5 hover:bg-sokoline-accent/10 text-sokoline-accent px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                                >
-                                  <MessageSquare size={14} /> Review
-                                </button>
-                              )}
+                           <div>
+                              <p className="font-medium text-zinc-900 text-sm group-hover:text-sokoline-accent transition-colors">{item.product_name}</p>
+                              <p className="text-xs text-zinc-500 mt-0.5">Quantity: {item.quantity}</p>
                            </div>
                         </div>
-                      ))}
-                   </div>
+                        <div className="flex items-center gap-6">
+                           <p className="font-medium text-zinc-900 text-sm">${item.price}</p>
+                           {order.status === 'COMPLETED' && item.product && (
+                             <button 
+                               onClick={() => handleReviewClick({ id: item.product!, name: item.product_name })}
+                               className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-600 hover:text-sokoline-accent border border-zinc-200 hover:border-sokoline-accent rounded-md px-3 py-1.5 transition-all bg-white shadow-sm"
+                             >
+                               <MessageSquare size={12} /> Leave a review
+                             </button>
+                           )}
+                        </div>
+                     </div>
+                   ))}
                 </div>
               </div>
             ))}
@@ -169,8 +164,7 @@ export default function OrdersPage() {
             onClose={() => setIsReviewModalOpen(false)}
             product={selectedProduct}
             onSuccess={() => {
-              // Potentially show a success toast
-              console.log("Review submitted successfully");
+              // Handle success (e.g., refresh data or show notification)
             }}
           />
         )}

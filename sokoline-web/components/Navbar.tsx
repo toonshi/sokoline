@@ -14,7 +14,6 @@ import { ShoppingBag, Search, Menu, Package, LayoutDashboard, X } from "lucide-r
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   
@@ -25,143 +24,132 @@ const Navbar = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-      setIsSearchOpen(false);
       setSearchQuery("");
     }
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md transition-all duration-300">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-sm">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         
-        {isSearchOpen ? (
-          <form onSubmit={handleSearch} className="flex flex-1 items-center gap-4 animate-in slide-in-from-top-2 duration-300">
-            <Search size={18} className="text-muted-foreground" />
-            <input 
-              autoFocus
-              type="text"
-              placeholder="Search products, student ventures..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground"
-            />
-            <button 
-              type="button" 
-              onClick={() => setIsSearchOpen(false)}
-              className="rounded-full p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
-            >
-              <X size={18} />
-            </button>
-          </form>
-        ) : (
-          <>
-            {/* LOGO */}
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight text-foreground">
-                sokoline
-              </span>
+        {/* LEFT: LOGO & NAV */}
+        <div className="flex items-center gap-8">
+          <Link href="/" className="flex items-center">
+            <span className="text-lg font-bold tracking-tight text-zinc-900">
+              sokoline
+            </span>
+          </Link>
+
+          <div className="hidden items-center gap-6 md:flex">
+            <Link href="/products" className="text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+              Products
             </Link>
+            <Link href="/shops" className="text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+              Shops
+            </Link>
+          </div>
+        </div>
 
-            {/* DESKTOP NAV */}
-            <div className="hidden items-center gap-8 md:flex">
-              <Link href="/products" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                products
-              </Link>
-              <Link href="/shops" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                shops
-              </Link>
-              
-              <Show when="signed-in">
-                <Link href="/orders" className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                  <Package className="h-4 w-4" />
-                  orders
-                </Link>
-              </Show>
+        {/* CENTER: SEARCH (Shopify-style integrated) */}
+        <div className="hidden max-w-md flex-1 px-8 md:block">
+           <form onSubmit={handleSearch} className="relative">
+             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
+                <Search size={14} />
+             </div>
+             <input 
+               type="text"
+               placeholder="Search..."
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+               className="w-full bg-zinc-100 border border-transparent rounded-md py-1.5 pl-9 pr-4 text-xs focus:bg-white focus:border-zinc-300 outline-none transition-all"
+             />
+           </form>
+        </div>
+
+        {/* RIGHT: ACTIONS */}
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <Show when="signed-in">
+            <Link 
+              href="/dashboard" 
+              className="hidden items-center gap-2 rounded-md px-3 py-1.5 text-[11px] font-semibold text-zinc-700 hover:bg-zinc-100 transition-colors md:flex"
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              Dashboard
+            </Link>
+            <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-zinc-200">
+              <UserButton 
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "w-full h-full",
+                    userButtonTrigger: "focus:shadow-none focus:ring-0"
+                  }
+                }}
+              />
             </div>
+          </Show>
 
-            {/* ICONS & ACTIONS */}
-            <div className="flex items-center gap-2 sm:gap-4">
-              <button 
-                onClick={() => setIsSearchOpen(true)}
-                className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              >
-                <Search size={20} strokeWidth={1.5} />
-                <span className="sr-only">Search</span>
-              </button>
-
-              <Link href="/cart" className="relative rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
-                <ShoppingBag size={20} strokeWidth={1.5} />
-                {cartItemCount > 0 && (
-                  <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-sokoline-accent text-[10px] font-bold text-white">
-                    {cartItemCount}
-                  </span>
-                )}
-                <span className="sr-only">Cart</span>
-              </Link>
-
-              <Show when="signed-in">
-                <Link 
-                  href="/dashboard" 
-                  className="hidden items-center gap-2 rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/80 md:flex"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  dashboard
-                </Link>
-                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-border">
-                  <UserButton 
-                    appearance={{
-                      elements: {
-                        userButtonAvatarBox: "w-full h-full",
-                        userButtonTrigger: "focus:shadow-none focus:ring-0"
-                      }
-                    }}
-                  />
-                </div>
-              </Show>
-              
-              <Show when="signed-out">
-                <div className="hidden items-center gap-2 md:flex">
-                  <SignInButton mode="modal">
-                    <button className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
-                      login
-                    </button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <button className="rounded-lg bg-sokoline-accent px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-sokoline-accent-hover hover:shadow-md">
-                      join
-                    </button>
-                  </SignUpButton>
-                </div>
-              </Show>
-
-              <button
-                className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:hidden"
-                onClick={() => setMobileOpen((prev) => !prev)}
-              >
-                <Menu size={20} strokeWidth={1.5} />
-              </button>
+          <Link href="/cart" className="relative p-2 text-zinc-500 hover:text-zinc-900 transition-colors">
+            <ShoppingBag size={18} strokeWidth={2} />
+            {cartItemCount > 0 && (
+              <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-sokoline-accent text-[9px] font-bold text-white">
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
+          
+          <Show when="signed-out">
+            <div className="hidden items-center gap-2 md:flex">
+              <SignInButton mode="modal">
+                <button className="text-[11px] font-semibold text-zinc-600 hover:text-zinc-900 px-3 py-1.5">
+                  Log in
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="rounded-md bg-zinc-900 px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-zinc-800 transition-all shadow-sm">
+                  Sign up
+                </button>
+              </SignUpButton>
             </div>
-          </>
-        )}
+          </Show>
+
+          <button
+            className="p-2 text-zinc-500 md:hidden"
+            onClick={() => setMobileOpen((prev) => !prev)}
+          >
+            <Menu size={20} />
+          </button>
+        </div>
       </div>
       
       {/* Mobile Nav */}
       {mobileOpen && (
-        <div className="border-t border-border bg-background p-6 md:hidden">
-          <nav className="flex flex-col gap-4">
-            <Link href="/products" className="text-sm font-medium text-muted-foreground" onClick={() => setMobileOpen(false)}>products</Link>
-            <Link href="/shops" className="text-sm font-medium text-muted-foreground" onClick={() => setMobileOpen(false)}>shops</Link>
+        <div className="border-t border-zinc-100 bg-white p-4 md:hidden">
+          <form onSubmit={handleSearch} className="relative mb-4">
+             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
+                <Search size={14} />
+             </div>
+             <input 
+               type="text"
+               placeholder="Search..."
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+               className="w-full bg-zinc-100 rounded-md py-2 pl-9 pr-4 text-xs outline-none"
+             />
+          </form>
+          <nav className="flex flex-col gap-1">
+            <Link href="/products" className="text-xs font-medium text-zinc-600 p-2 rounded-md hover:bg-zinc-50" onClick={() => setMobileOpen(false)}>Products</Link>
+            <Link href="/shops" className="text-xs font-medium text-zinc-600 p-2 rounded-md hover:bg-zinc-50" onClick={() => setMobileOpen(false)}>Shops</Link>
             <Show when="signed-in">
-              <Link href="/orders" className="text-sm font-medium text-muted-foreground" onClick={() => setMobileOpen(false)}>orders</Link>
-              <Link href="/dashboard" className="text-sm font-semibold text-foreground" onClick={() => setMobileOpen(false)}>dashboard</Link>
+              <Link href="/orders" className="text-xs font-medium text-zinc-600 p-2 rounded-md hover:bg-zinc-50" onClick={() => setMobileOpen(false)}>Orders</Link>
+              <Link href="/dashboard" className="text-xs font-semibold text-zinc-900 p-2 rounded-md hover:bg-zinc-50" onClick={() => setMobileOpen(false)}>Dashboard</Link>
             </Show>
-            <Show when="signed-out">
-              <div className="mt-4 flex flex-col gap-2">
+            <Show when="signed-out" >
+              <div className="mt-2 flex flex-col gap-2 pt-2 border-t border-zinc-100">
                 <SignInButton mode="modal">
-                  <button className="w-full rounded-lg bg-accent py-2 text-sm font-medium text-accent-foreground">login</button>
+                  <button className="w-full rounded-md border border-zinc-200 py-2 text-[11px] font-semibold text-zinc-700">Log in</button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="w-full rounded-lg bg-sokoline-accent py-2 text-sm font-semibold text-white">join</button>
+                  <button className="w-full rounded-md bg-zinc-900 py-2 text-[11px] font-semibold text-white">Sign up</button>
                 </SignUpButton>
               </div>
             </Show>

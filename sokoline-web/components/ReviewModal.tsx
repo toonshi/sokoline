@@ -39,29 +39,29 @@ export default function ReviewModal({ isOpen, onClose, product, onSuccess }: Rev
         onClose();
       }
     } catch (err: any) {
-      setError(err.message || "Something went wrong. Have you already reviewed this product?");
+      setError(err.message || "Unable to submit review. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-background rounded-[40px] border border-border w-full max-w-lg shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden">
-        <div className="flex justify-between items-center p-8 border-b border-border">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/50 backdrop-none">
+      <div className="bg-white rounded-lg border border-zinc-200 w-full max-w-md shadow-xl overflow-hidden">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-zinc-200 bg-zinc-50/50">
           <div>
-            <h2 className="text-2xl font-black uppercase tracking-tight">Review Product</h2>
-            <p className="text-zinc-500 font-medium text-sm mt-1">{product.name}</p>
+            <h2 className="text-base font-semibold text-zinc-900">Review Product</h2>
+            <p className="text-zinc-500 text-xs mt-0.5">{product.name}</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-2xl hover:bg-muted transition-colors">
-            <X size={20} />
+          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-600 transition-colors p-1">
+            <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-8">
-          <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-center block">Rate your experience</label>
-            <div className="flex justify-center gap-2">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div className="space-y-3">
+            <label className="text-xs font-medium text-zinc-700 text-center block">Rating</label>
+            <div className="flex justify-center gap-1.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -69,55 +69,59 @@ export default function ReviewModal({ isOpen, onClose, product, onSuccess }: Rev
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHover(star)}
                   onMouseLeave={() => setHover(0)}
-                  className="transition-transform active:scale-90"
+                  className="transition-transform active:scale-95"
                 >
                   <Star 
-                    size={40} 
+                    size={28} 
                     className={`${
                       (hover || rating) >= star 
-                        ? "fill-sokoline-accent text-sokoline-accent" 
+                        ? "fill-orange-400 text-orange-400" 
                         : "text-zinc-200"
-                    } transition-colors duration-200`}
+                    } transition-colors duration-150`}
                   />
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Your Thoughts</label>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-zinc-700">Comments</label>
             <textarea
               required
               rows={4}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="What did you think of the product and the seller's service?"
-              className="w-full bg-muted/50 border border-border rounded-2xl p-6 font-medium outline-none focus:ring-2 focus:ring-sokoline-accent transition-all resize-none"
+              placeholder="Share your experience with this product..."
+              className="w-full bg-white border border-zinc-300 rounded-md p-3 text-sm outline-none focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent transition-all resize-none"
             />
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl p-4 text-xs font-bold text-center">
+            <div className="bg-red-50 border border-red-100 text-red-600 rounded-md p-3 text-[11px] font-medium text-center">
               {error}
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-sokoline-accent text-white py-6 rounded-[24px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-sokoline-accent-hover transition-all shadow-xl shadow-sokoline-accent/20 active:scale-95 disabled:opacity-50"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={24} className="animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                Submit Review <Send size={18} />
-              </>
-            )}
-          </button>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 bg-white border border-zinc-300 rounded-md text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 bg-zinc-900 text-white py-2 rounded-md text-sm font-medium hover:bg-zinc-800 transition-all shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                "Submit"
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

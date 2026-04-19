@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { MessageCircle, X, Send, Loader2, Sparkles, User, Bot, ShoppingBag } from "lucide-react";
+import { MessageSquare, X, Send, Loader2, Sparkles, User, Bot, ShoppingBag, Minus } from "lucide-react";
 import Link from "next/link";
 
 export default function ChatSheet() {
@@ -25,63 +25,62 @@ export default function ChatSheet() {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Support Button */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 h-16 w-16 bg-sokoline-accent text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all z-50 group"
+        className="fixed bottom-6 right-6 h-12 w-12 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-zinc-800 transition-all z-50"
       >
-        <MessageCircle size={28} className="group-hover:rotate-12 transition-transform" />
-        <span className="absolute -top-1 -right-1 flex h-4 w-4">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sokoline-accent opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-4 w-4 bg-sokoline-accent border-2 border-white"></span>
-        </span>
+        <MessageSquare size={20} />
       </button>
 
-      {/* Chat Panel */}
+      {/* Chat Window */}
       {isOpen && (
-        <div className="fixed inset-y-0 right-0 w-full max-w-md bg-background border-l border-border shadow-2xl z-[100] flex flex-col animate-in slide-in-from-right duration-500">
+        <div className="fixed bottom-24 right-6 w-full max-w-[360px] h-[520px] bg-white border border-zinc-200 rounded-xl shadow-2xl z-[100] flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="p-6 border-b border-border flex justify-between items-center bg-sokoline-accent/5">
-             <div className="flex items-center gap-3">
-               <div className="h-10 w-10 rounded-2xl bg-sokoline-accent flex items-center justify-center text-white">
-                 <Sparkles size={20} />
+          <div className="px-5 py-4 bg-zinc-900 flex justify-between items-center text-white">
+             <div className="flex items-center gap-2.5">
+               <div className="h-7 w-7 rounded-md bg-white/10 flex items-center justify-center">
+                 <Sparkles size={14} className="text-white" />
                </div>
                <div>
-                 <h2 className="text-lg font-black uppercase tracking-tight">Sokoline AI</h2>
-                 <p className="text-[10px] font-bold text-sokoline-accent uppercase tracking-widest">Active Assistant</p>
+                 <h2 className="text-sm font-semibold tracking-tight">Sokoline Support</h2>
+                 <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                    <span className="text-[10px] font-medium text-zinc-400">AI Assistant Online</span>
+                 </div>
                </div>
              </div>
-             <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-muted rounded-xl transition-colors">
-               <X size={20} />
+             <button onClick={() => setIsOpen(false)} className="text-zinc-400 hover:text-white transition-colors">
+               <X size={18} />
              </button>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-zinc-50/30">
              {messages.length === 0 && (
-               <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
-                  <div className="h-16 w-16 rounded-3xl bg-muted flex items-center justify-center text-zinc-400">
-                    <Bot size={32} />
+               <div className="h-full flex flex-col items-center justify-center text-center px-4 space-y-3">
+                  <div className="h-10 w-10 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-400 border border-zinc-200">
+                    <Bot size={20} />
                   </div>
-                  <h3 className="text-xl font-bold uppercase tracking-tight">How can I help?</h3>
-                  <p className="text-muted-foreground text-sm font-medium max-w-[240px]">
-                    Ask me about products, shops, or how to checkout with M-Pesa.
+                  <h3 className="text-sm font-semibold text-zinc-900">How can we help today?</h3>
+                  <p className="text-zinc-500 text-xs leading-normal">
+                    Ask about orders, products, or payment status. Our AI is here to guide you.
                   </p>
                </div>
              )}
              
              {messages.map((m) => (
-               <div key={m.id} className={`flex gap-4 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${
-                    m.role === 'user' ? 'bg-zinc-100 text-zinc-500' : 'bg-sokoline-accent/10 text-sokoline-accent'
+               <div key={m.id} className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`h-6 w-6 rounded flex items-center justify-center shrink-0 mt-1 ${
+                    m.role === 'user' ? 'bg-zinc-200 text-zinc-600' : 'bg-zinc-900 text-white'
                   }`}>
-                    {m.role === 'user' ? <User size={16} /> : <Bot size={16} />}
+                    {m.role === 'user' ? <User size={12} /> : <Bot size={12} />}
                   </div>
-                  <div className={`flex flex-col gap-2 max-w-[80%] ${m.role === 'user' ? 'items-end' : ''}`}>
-                    <div className={`p-4 rounded-[24px] text-sm font-medium leading-relaxed ${
+                  <div className={`flex flex-col gap-1.5 max-w-[85%] ${m.role === 'user' ? 'items-end' : ''}`}>
+                    <div className={`px-4 py-2.5 rounded-lg text-xs leading-relaxed ${
                       m.role === 'user' 
-                        ? 'bg-foreground text-background rounded-tr-none' 
-                        : 'bg-muted/50 text-foreground rounded-tl-none border border-border'
+                        ? 'bg-sokoline-accent text-white rounded-tr-none shadow-sm' 
+                        : 'bg-white text-zinc-800 rounded-tl-none border border-zinc-200 shadow-sm'
                     }`}>
                       {(m as any).content}
                     </div>
@@ -89,28 +88,26 @@ export default function ChatSheet() {
                     {/* Tool Results Rendering */}
                     {(m as any).toolInvocations?.map((toolInvocation: any) => {
                       const { toolName, toolCallId, state } = toolInvocation;
-                      if (state === 'result') {
-                        if (toolName === 'searchProducts') {
-                          return (
-                            <div key={toolCallId} className="space-y-2 mt-2">
-                               <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Found these products:</p>
-                               <div className="flex gap-2 overflow-x-auto pb-2">
-                                 {toolInvocation.result.slice(0, 3).map((p: any) => (
-                                   <Link 
-                                     key={p.id} 
-                                     href={`/products/${p.slug}`}
-                                     className="flex items-center gap-2 p-2 bg-background border border-border rounded-xl shrink-0 hover:border-sokoline-accent transition-all"
-                                   >
-                                     <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center text-zinc-400">
-                                       <ShoppingBag size={14} />
-                                     </div>
-                                     <span className="text-xs font-bold truncate max-w-[100px]">{p.name}</span>
-                                   </Link>
-                                 ))}
-                               </div>
-                            </div>
-                          );
-                        }
+                      if (state === 'result' && toolName === 'searchProducts') {
+                        return (
+                          <div key={toolCallId} className="w-full space-y-2 mt-1">
+                             <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-tight">Suggested products:</p>
+                             <div className="space-y-1.5">
+                               {toolInvocation.result.slice(0, 2).map((p: any) => (
+                                 <Link 
+                                   key={p.id} 
+                                   href={`/products/${p.slug}`}
+                                   className="flex items-center gap-2.5 p-2 bg-white border border-zinc-200 rounded-md hover:border-zinc-300 hover:shadow-sm transition-all group"
+                                 >
+                                   <div className="h-8 w-8 rounded bg-zinc-50 flex items-center justify-center text-zinc-300 border border-zinc-100 shrink-0">
+                                     <ShoppingBag size={14} />
+                                   </div>
+                                   <span className="text-[11px] font-medium text-zinc-700 truncate group-hover:text-sokoline-accent">{p.name}</span>
+                                 </Link>
+                               ))}
+                             </div>
+                          </div>
+                        );
                       }
                       return null;
                     })}
@@ -118,41 +115,43 @@ export default function ChatSheet() {
                </div>
              ))}
              {isLoading && (
-               <div className="flex gap-4">
-                  <div className="h-8 w-8 rounded-xl bg-sokoline-accent/10 text-sokoline-accent flex items-center justify-center">
-                    <Loader2 size={16} className="animate-spin" />
+               <div className="flex gap-3">
+                  <div className="h-6 w-6 rounded bg-zinc-900 text-white flex items-center justify-center mt-1">
+                    <Loader2 size={12} className="animate-spin" />
                   </div>
-                  <div className="bg-muted/50 border border-border rounded-[24px] rounded-tl-none p-4 w-12 flex justify-center">
+                  <div className="bg-white border border-zinc-200 rounded-lg rounded-tl-none px-3 py-2 shadow-sm">
                     <div className="flex gap-1">
-                      <div className="h-1.5 w-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                      <div className="h-1.5 w-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                      <div className="h-1.5 w-1.5 bg-zinc-400 rounded-full animate-bounce"></div>
+                      <div className="h-1 w-1 bg-zinc-300 rounded-full animate-pulse"></div>
+                      <div className="h-1 w-1 bg-zinc-300 rounded-full animate-pulse [animation-delay:200ms]"></div>
+                      <div className="h-1 w-1 bg-zinc-300 rounded-full animate-pulse [animation-delay:400ms]"></div>
                     </div>
                   </div>
                </div>
              )}
           </div>
 
-          {/* Footer Input */}
-          <div className="p-6 border-t border-border bg-muted/20">
+          {/* Input Area */}
+          <div className="p-4 bg-white border-t border-zinc-200">
              <form onSubmit={handleSubmitForm} className="relative">
                <input 
                  value={inputValue}
                  onChange={(e) => setInputValue(e.target.value)}
-                 placeholder="Type your question..."
-                 className="w-full bg-background border border-border rounded-[24px] py-4 pl-6 pr-14 font-medium outline-none focus:ring-2 focus:ring-sokoline-accent shadow-sm transition-all"
+                 placeholder="How can we help?"
+                 className="w-full bg-zinc-100 border border-transparent rounded-md py-2.5 pl-4 pr-10 text-xs focus:bg-white focus:border-zinc-300 outline-none transition-all placeholder:text-zinc-500"
                />
                <button 
                  type="submit"
                  disabled={!inputValue.trim() || isLoading}
-                 className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 bg-sokoline-accent text-white rounded-full flex items-center justify-center hover:bg-sokoline-accent-hover transition-all disabled:opacity-50"
+                 className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 text-zinc-400 hover:text-zinc-900 transition-colors disabled:opacity-30"
                >
-                 <Send size={18} />
+                 <Send size={14} />
                </button>
              </form>
-             <p className="mt-4 text-[9px] text-zinc-400 uppercase tracking-widest text-center font-bold">
-               Powered by Sokoline AI • Campus Support
-             </p>
+             <div className="mt-3 flex items-center justify-center gap-1.5 opacity-40">
+                <div className="h-px flex-1 bg-zinc-300" />
+                <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-tighter">AI Support Powered by Sokoline</span>
+                <div className="h-px flex-1 bg-zinc-300" />
+             </div>
           </div>
         </div>
       )}
