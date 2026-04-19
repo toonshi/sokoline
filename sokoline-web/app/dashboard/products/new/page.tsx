@@ -5,8 +5,20 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { fetchMyShop, getCategories, createProduct } from "@/lib/api";
 import { Category } from "@/lib/types";
-import { ArrowLeft, Save, Loader2, Package, Tag, DollarSign, ListTree, ChevronDown } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -84,139 +96,150 @@ export default function NewProductPage() {
   return (
     <main className="bg-zinc-50 min-h-screen pb-20">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Link href="/dashboard/products" className="text-sm text-muted-foreground flex items-center gap-2 mb-8 hover:text-foreground transition-colors group">
-          <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Products
-        </Link>
+        <Button variant="ghost" size="sm" render={<Link href="/dashboard/products" />} className="mb-8 text-muted-foreground hover:text-foreground">
+          <ArrowLeft size={14} className="mr-2" /> Products
+        </Button>
 
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-semibold text-foreground">Add product</h1>
           <div className="flex gap-3">
-             <Link href="/dashboard/products" className="px-4 py-2 bg-white border border-zinc-300 rounded-md text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
-               Cancel
-             </Link>
-             <button 
+             <Button variant="outline" render={<Link href="/dashboard/products" />}>Cancel</Button>
+             <Button 
                onClick={handleSubmit}
                disabled={isSubmitting || !shopId}
-               className="px-4 py-2 bg-sokoline-accent text-white rounded-md text-sm font-medium hover:bg-sokoline-accent/90 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+               className="bg-sokoline-accent hover:bg-sokoline-accent/90"
              >
-               {isSubmitting && <Loader2 size={14} className="animate-spin" />}
+               {isSubmitting && <Loader2 size={14} className="mr-2 animate-spin" />}
                Save product
-             </button>
+             </Button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form Content */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6 space-y-4">
-               <div className="space-y-1.5">
-                 <label className="text-sm font-medium text-zinc-700">Title</label>
-                 <input 
-                   required
-                   value={formData.name}
-                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                   className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
-                   placeholder="Short sleeve t-shirt"
-                 />
-               </div>
+            <Card className="shadow-sm">
+              <CardContent className="pt-6 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input 
+                    id="title"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="Short sleeve t-shirt"
+                  />
+                </div>
 
-               <div className="space-y-1.5">
-                 <label className="text-sm font-medium text-zinc-700">Description</label>
-                 <textarea 
-                   required
-                   rows={6}
-                   value={formData.description}
-                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                   className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
-                   placeholder="Describe your product in detail..."
-                 />
-               </div>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <textarea 
+                    id="description"
+                    required
+                    rows={6}
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Describe your product in detail..."
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6">
-               <h3 className="text-sm font-semibold text-foreground mb-4">Pricing & Inventory</h3>
-               <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-zinc-700">Price (USD)</label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</div>
-                      <input 
-                        required
-                        type="number"
-                        step="0.01"
-                        value={formData.price}
-                        onChange={(e) => setFormData({...formData, price: e.target.value})}
-                        className="w-full bg-white border border-zinc-300 rounded-md py-2 pl-7 pr-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all"
-                        placeholder="0.00"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-zinc-700">Quantity</label>
-                    <input 
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold">Pricing & Inventory</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price (USD)</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                    <Input 
+                      id="price"
                       required
                       type="number"
-                      value={formData.stock}
-                      onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                      className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all"
-                      placeholder="0"
+                      step="0.01"
+                      className="pl-7"
+                      value={formData.price}
+                      onChange={(e) => setFormData({...formData, price: e.target.value})}
+                      placeholder="0.00"
                     />
                   </div>
-               </div>
-            </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stock">Quantity</Label>
+                  <Input 
+                    id="stock"
+                    required
+                    type="number"
+                    value={formData.stock}
+                    onChange={(e) => setFormData({...formData, stock: e.target.value})}
+                    placeholder="0"
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6">
-               <h3 className="text-sm font-semibold text-foreground mb-4">Shipping & Returns</h3>
-               <div className="space-y-4">
-                 <div className="space-y-1.5">
-                   <label className="text-sm font-medium text-zinc-700">Shipping Policy</label>
-                   <input 
-                     value={formData.shipping_info}
-                     onChange={(e) => setFormData({...formData, shipping_info: e.target.value})}
-                     className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
-                     placeholder="e.g. Ships within 24 hours"
-                   />
-                 </div>
-                 <div className="space-y-1.5">
-                   <label className="text-sm font-medium text-zinc-700">Return Policy</label>
-                   <input 
-                     value={formData.return_policy}
-                     onChange={(e) => setFormData({...formData, return_policy: e.target.value})}
-                     className="w-full bg-white border border-zinc-300 rounded-md py-2 px-3 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all placeholder:text-zinc-400"
-                     placeholder="e.g. 30-day money back guarantee"
-                   />
-                 </div>
-               </div>
-            </div>
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold">Shipping & Returns</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="shipping">Shipping Policy</Label>
+                  <Input 
+                    id="shipping"
+                    value={formData.shipping_info}
+                    onChange={(e) => setFormData({...formData, shipping_info: e.target.value})}
+                    placeholder="e.g. Ships within 24 hours"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="return">Return Policy</Label>
+                  <Input 
+                    id="return"
+                    value={formData.return_policy}
+                    onChange={(e) => setFormData({...formData, return_policy: e.target.value})}
+                    placeholder="e.g. 30-day money back guarantee"
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <div className="bg-white border border-zinc-200 rounded-lg shadow-sm p-6">
-               <h3 className="text-sm font-semibold text-foreground mb-4">Organization</h3>
-               <div className="space-y-1.5">
-                 <label className="text-sm font-medium text-zinc-700">Category</label>
-                 <div className="relative">
-                    <select 
-                      required
-                      value={formData.category}
-                      onChange={(e) => setFormData({...formData, category: e.target.value})}
-                      className="w-full bg-white border border-zinc-300 rounded-md py-2 pl-3 pr-10 text-sm focus:border-sokoline-accent focus:ring-1 focus:ring-sokoline-accent outline-none transition-all appearance-none cursor-pointer"
-                    >
-                      <option value="">Select category</option>
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold">Organization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label>Category</Label>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(val: string | null) => setFormData({...formData, category: val || ""})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
                       {categories.map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" size={14} />
-                 </div>
-               </div>
-            </div>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
 
             {error && (
-              <div className="bg-red-50 border border-red-100 text-red-600 rounded-md p-4 text-xs font-medium">
-                {error}
-              </div>
+              <Card className="bg-destructive/10 border-destructive/20 shadow-none">
+                <CardContent className="p-4 text-xs font-medium text-destructive">
+                  {error}
+                </CardContent>
+              </Card>
             )}
           </div>
         </div>

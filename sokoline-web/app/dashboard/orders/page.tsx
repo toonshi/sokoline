@@ -4,8 +4,18 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { fetchShopOrders } from "@/lib/api";
 import { Order } from "@/lib/types";
-import { Package, Clock, CheckCircle2, XCircle, ShoppingBag, ArrowUpRight, DollarSign } from "lucide-react";
-import Link from "next/link";
+import { Package, Clock, CheckCircle2, XCircle, DollarSign } from "lucide-react";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ShopOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -40,6 +50,10 @@ export default function ShopOrdersPage() {
     );
   }
 
+  const totalRevenue = orders.reduce((acc, o) => 
+    acc + (o.payment_status === 'SUCCESS' ? parseFloat(o.total_price) : 0), 0
+  ).toFixed(2);
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       {/* Header */}
@@ -50,90 +64,98 @@ export default function ShopOrdersPage() {
             Track incoming orders and verify student payments.
           </p>
         </div>
-        <div className="bg-white border border-zinc-200 px-4 py-2 rounded-md shadow-sm">
-           <div className="flex items-center gap-2">
+        <Card className="shadow-none bg-zinc-50 border-zinc-200">
+           <CardContent className="py-2 px-4 flex items-center gap-2">
              <DollarSign size={16} className="text-green-600" />
              <span className="text-sm font-semibold text-zinc-900">
-               ${orders.reduce((acc, o) => acc + (o.payment_status === 'SUCCESS' ? parseFloat(o.total_price) : 0), 0).toFixed(2)} 
-               <span className="text-zinc-400 font-normal ml-1">Total Revenue</span>
+               ${totalRevenue} 
+               <span className="text-zinc-400 font-normal ml-1 text-xs">Total Revenue</span>
              </span>
-           </div>
-        </div>
+           </CardContent>
+        </Card>
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white border border-zinc-200 rounded-lg shadow-sm overflow-hidden">
-        {orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-             <div className="h-12 w-12 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-400 mb-4 border border-zinc-100">
-               <Package size={24} />
-             </div>
-             <h2 className="text-base font-semibold text-zinc-900">No sales yet</h2>
-             <p className="text-zinc-500 text-sm max-w-xs mt-1">Incoming orders from other students will appear here.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-zinc-50/50 border-b border-zinc-200">
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 uppercase tracking-tighter">Order</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 uppercase tracking-tighter">Date</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 uppercase tracking-tighter">Customer</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 uppercase tracking-tighter">Payment</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 uppercase tracking-tighter">Status</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 uppercase tracking-tighter text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200">
+      <Card className="shadow-sm">
+        <CardContent className="p-0">
+          {orders.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+               <div className="h-12 w-12 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-400 mb-4 border border-zinc-100">
+                 <Package size={24} />
+               </div>
+               <h2 className="text-base font-semibold text-zinc-900">No sales yet</h2>
+               <p className="text-zinc-500 text-sm max-w-xs mt-1">Incoming orders from other students will appear here.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-zinc-50/50">
+                  <TableHead className="uppercase text-[10px] tracking-wider">Order</TableHead>
+                  <TableHead className="uppercase text-[10px] tracking-wider">Date</TableHead>
+                  <TableHead className="uppercase text-[10px] tracking-wider">Customer</TableHead>
+                  <TableHead className="uppercase text-[10px] tracking-wider">Payment</TableHead>
+                  <TableHead className="uppercase text-[10px] tracking-wider">Status</TableHead>
+                  <TableHead className="text-right uppercase text-[10px] tracking-wider">Total</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-zinc-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-semibold text-zinc-900">#SKL-{order.id.toString().padStart(5, '0')}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm text-zinc-500">{new Date(order.created_at).toLocaleDateString()}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                       <span className="text-sm text-zinc-900 font-medium">Student #{order.user}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${
-                         order.payment_status === 'SUCCESS' 
-                           ? "bg-green-50 text-green-700 border-green-100" 
-                           : order.payment_status === 'FAILED'
-                           ? "bg-red-50 text-red-700 border-red-100"
-                           : "bg-orange-50 text-orange-700 border-orange-100"
-                       }`}>
+                  <TableRow key={order.id} className="hover:bg-zinc-50/50 transition-colors">
+                    <TableCell className="font-semibold text-zinc-900">
+                      #SKL-{order.id.toString().padStart(5, '0')}
+                    </TableCell>
+                    <TableCell className="text-zinc-500">
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-zinc-900 font-medium">
+                      Student #{order.user}
+                    </TableCell>
+                    <TableCell>
+                       <Badge 
+                         variant={order.payment_status === 'SUCCESS' ? "default" : "secondary"}
+                         className={`border font-bold ${
+                           order.payment_status === 'SUCCESS' 
+                             ? "bg-green-50 text-green-700 border-green-100 hover:bg-green-50" 
+                             : order.payment_status === 'FAILED'
+                             ? "bg-red-50 text-red-700 border-red-100 hover:bg-red-50"
+                             : "bg-orange-50 text-orange-700 border-orange-100 hover:bg-orange-50"
+                         }`}
+                       >
                          {order.payment_status}
-                       </span>
-                    </td>
-                    <td className="px-6 py-4">
-                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${
-                         order.status === 'COMPLETED' 
-                           ? "bg-blue-50 text-blue-700 border-blue-100" 
-                           : "bg-zinc-100 text-zinc-600 border-zinc-200"
-                       }`}>
+                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                       <Badge 
+                         variant="outline"
+                         className={`font-bold ${
+                           order.status === 'COMPLETED' 
+                             ? "bg-blue-50 text-blue-700 border-blue-100" 
+                             : "bg-zinc-100 text-zinc-600 border-zinc-200"
+                         }`}
+                       >
                          {order.status}
-                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-sm font-semibold text-zinc-900">${order.total_price}</span>
-                    </td>
-                  </tr>
+                       </Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-semibold text-zinc-900">
+                      ${order.total_price}
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
       
-      <div className="bg-zinc-100 border border-zinc-200 rounded-md p-4 flex items-start gap-3">
-         <Clock size={16} className="text-zinc-500 mt-0.5" />
-         <div className="text-xs text-zinc-600 leading-normal">
-            <p className="font-semibold text-zinc-900 mb-1">Verify Payments Carefully</p>
-            Only fulfill and deliver items when the **Payment Status** is marked as <span className="text-green-700 font-bold uppercase tracking-tighter">Success</span>. This confirms the M-Pesa transaction has been verified by the system.
-         </div>
-      </div>
+      <Card className="bg-zinc-50 border-zinc-200 shadow-none">
+        <CardContent className="p-4 flex items-start gap-3">
+          <Clock size={16} className="text-zinc-500 mt-0.5" />
+          <div className="text-xs text-zinc-600 leading-normal">
+             <p className="font-semibold text-zinc-900 mb-1 text-sm">Verify Payments Carefully</p>
+             Only fulfill and deliver items when the **Payment Status** is marked as <span className="text-green-700 font-bold uppercase tracking-tighter">Success</span>. This confirms the M-Pesa transaction has been verified by the system.
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

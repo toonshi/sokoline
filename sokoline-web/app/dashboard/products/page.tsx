@@ -4,9 +4,21 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { fetchMyShop, getProducts } from "@/lib/api";
 import { Product } from "@/lib/types";
-import { Plus, Edit2, Trash2, ExternalLink, Package, MoreHorizontal } from "lucide-react";
+import { Plus, Edit2, Trash2, ExternalLink, Package } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -54,43 +66,45 @@ export default function InventoryPage() {
             Manage your listings and track stock levels.
           </p>
         </div>
-        <Link 
-          href="/dashboard/products/new"
-          className="bg-sokoline-accent text-white px-4 py-2 rounded-md font-medium text-sm flex items-center gap-2 hover:bg-sokoline-accent/90 transition-colors shadow-sm"
+        <Button 
+          render={<Link href="/dashboard/products/new" />} 
+          className="bg-sokoline-accent hover:bg-sokoline-accent/90"
         >
-          <Plus size={16} />
+          <Plus size={16} className="mr-2" />
           Add product
-        </Link>
+        </Button>
       </div>
 
       {/* Table Section */}
-      <div className="bg-white border border-zinc-200 rounded-lg shadow-sm overflow-hidden">
-        {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-             <div className="h-12 w-12 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-400 mb-4 border border-zinc-100">
-               <Package size={24} />
-             </div>
-             <h2 className="text-base font-semibold text-foreground">No products found</h2>
-             <p className="text-zinc-500 text-sm max-w-xs mt-1">Start by adding your first product to your shop.</p>
-             <Link href="/dashboard/products/new" className="text-sokoline-accent text-sm font-medium mt-4 hover:underline">Create product</Link>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-zinc-50/50 border-b border-zinc-200">
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600">Product</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600">Status</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600">Inventory</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600">Category</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 text-right">Price</th>
-                  <th className="px-6 py-3 text-xs font-semibold text-zinc-600 text-right"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200">
+      <Card className="shadow-sm">
+        <CardContent className="p-0">
+          {products.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+               <div className="h-12 w-12 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-400 mb-4 border border-zinc-100">
+                 <Package size={24} />
+               </div>
+               <h2 className="text-base font-semibold text-foreground">No products found</h2>
+               <p className="text-zinc-500 text-sm max-w-xs mt-1">Start by adding your first product to your shop.</p>
+               <Button variant="link" render={<Link href="/dashboard/products/new" />} className="text-sokoline-accent mt-4">
+                 Create product
+               </Button>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-zinc-50/50">
+                  <TableHead className="w-[300px]">Product</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Inventory</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead className="text-right">Price</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {products.map((product) => (
-                  <tr key={product.id} className="hover:bg-zinc-50/50 transition-colors group">
-                    <td className="px-6 py-4">
+                  <TableRow key={product.id} className="group transition-colors">
+                    <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="relative h-10 w-10 rounded border border-zinc-200 overflow-hidden bg-zinc-50 shrink-0">
                            {product.images?.[0] ? (
@@ -101,45 +115,43 @@ export default function InventoryPage() {
                         </div>
                         <span className="text-sm font-semibold text-zinc-900 group-hover:text-sokoline-accent transition-colors">{product.name}</span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${
-                         product.stock > 0 ? "bg-green-50 text-green-700 border border-green-100" : "bg-zinc-100 text-zinc-600 border border-zinc-200"
-                       }`}>
+                    </TableCell>
+                    <TableCell>
+                       <Badge variant={product.stock > 0 ? "default" : "secondary"} className={product.stock > 0 ? "bg-green-50 text-green-700 border-green-100 hover:bg-green-50" : ""}>
                          {product.stock > 0 ? "Active" : "Draft"}
-                       </span>
-                    </td>
-                    <td className="px-6 py-4">
+                       </Badge>
+                    </TableCell>
+                    <TableCell>
                       <span className={`text-sm ${product.stock <= 5 ? "text-orange-600 font-medium" : "text-zinc-600"}`}>
                         {product.stock} in stock
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
+                    </TableCell>
+                    <TableCell>
                        <span className="text-sm text-zinc-500">{product.category?.name || "Uncategorized"}</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
+                    </TableCell>
+                    <TableCell className="text-right">
                       <span className="text-sm font-medium text-zinc-900">${product.price}</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
+                    </TableCell>
+                    <TableCell className="text-right">
                        <div className="flex items-center justify-end gap-1">
-                          <Link href={`/products/${product.slug}`} className="p-1.5 text-zinc-400 hover:text-zinc-600 rounded transition-colors" title="View on site">
+                          <Button variant="ghost" size="icon-sm" render={<Link href={`/products/${product.slug}`} title="View on site" />}>
                              <ExternalLink size={14} />
-                          </Link>
-                          <button className="p-1.5 text-zinc-400 hover:text-zinc-600 rounded transition-colors" title="Edit">
+                          </Button>
+                          <Button variant="ghost" size="icon-sm" title="Edit">
                              <Edit2 size={14} />
-                          </button>
-                          <button className="p-1.5 text-zinc-400 hover:text-red-600 rounded transition-colors" title="Delete">
+                          </Button>
+                          <Button variant="ghost" size="icon-sm" className="text-zinc-400 hover:text-red-600" title="Delete">
                              <Trash2 size={14} />
-                          </button>
+                          </Button>
                        </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
