@@ -98,6 +98,17 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
+        product_id = self.request.data.get('product')
+        # Check if user has a COMPLETED order with this product
+        has_purchased = OrderItem.objects.filter(
+            order__user=self.request.user,
+            order__status='COMPLETED',
+            product_id=product_id
+        ).exists()
+
+        if not has_purchased:
+            raise ValidationError("You can only review products you have purchased.")
+
         serializer.save(user=self.request.user)
 
 from .daraja import DarajaClient

@@ -204,6 +204,23 @@ export async function getOrderPaymentStatus(token: string, orderId: number): Pro
   }
 }
 
+export async function submitReview(token: string, data: { product: number, rating: number, comment: string }): Promise<Review | null> {
+  try {
+    const response = await authenticatedFetch("/reviews/", token, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData[0] || errorData.detail || "Failed to submit review");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    throw error;
+  }
+}
+
 export async function fetchOrders(token: string): Promise<Order[]> {
   try {
     const response = await authenticatedFetch("/orders/", token);

@@ -4,12 +4,16 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from "@clerk/nextjs";
 import { fetchOrders } from "@/lib/api";
 import { Order } from "@/lib/types";
-import { Package, Clock, CheckCircle2, XCircle, ShoppingBag, ArrowRight } from "lucide-react";
+import { Package, Clock, CheckCircle2, XCircle, ShoppingBag, MessageSquare } from "lucide-react";
 import Link from 'next/link';
+import ReviewModal from '@/components/ReviewModal';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<{ id: number, name: string } | null>(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  
   const { getToken, isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
@@ -32,7 +36,7 @@ export default function OrdersPage() {
     } else if (isLoaded && !isSignedIn) {
       setLoading(false);
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, getToken]);
 
   if (!isLoaded || loading) {
     return (
@@ -51,6 +55,11 @@ export default function OrdersPage() {
       </div>
     );
   }
+
+  const handleReviewClick = (product: { id: number, name: string }) => {
+    setSelectedProduct(product);
+    setIsReviewModalOpen(true);
+  };
 
   return (
     <main className="bg-background dark:bg-background min-h-screen pb-32">
@@ -134,7 +143,17 @@ export default function OrdersPage() {
                                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Qty: {item.quantity}</span>
                               </div>
                            </div>
-                           <span className="font-bold text-foreground dark:text-background">${item.price}</span>
+                           <div className="flex items-center gap-8">
+                              <span className="font-bold text-foreground dark:text-background">${item.price}</span>
+                              {order.status === 'COMPLETED' && item.product && (
+                                <button 
+                                  onClick={() => handleReviewClick({ id: item.product!, name: item.product_name })}
+                                  className="flex items-center gap-2 bg-sokoline-accent/5 hover:bg-sokoline-accent/10 text-sokoline-accent px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                                >
+                                  <MessageSquare size={14} /> Review
+                                </button>
+                              )}
+                           </div>
                         </div>
                       ))}
                    </div>
@@ -142,6 +161,18 @@ export default function OrdersPage() {
               </div>
             ))}
           </div>
+        )}
+
+        {selectedProduct && (
+          <ReviewModal 
+            isOpen={isReviewModalOpen}
+            onClose={() => setIsReviewModalOpen(false)}
+            product={selectedProduct}
+            onSuccess={() => {
+              // Potentially show a success toast
+              console.log("Review submitted successfully");
+            }}
+          />
         )}
       </div>
     </main>
