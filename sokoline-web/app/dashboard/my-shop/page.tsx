@@ -82,9 +82,9 @@ export default function MyShopPage() {
       <div className="text-center py-20 bg-gray-100 rounded-xl">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">No shop found</h2>
         <p className="text-gray-500 mb-8 font-medium">You haven't launched your venture yet.</p>
-        <button className="bg-teal-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-700 transition-all shadow-sm">
+        <Link href="/dashboard/my-shop/new" className="inline-block bg-teal-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-700 transition-all shadow-sm">
           Launch your venture
-        </button>
+        </Link>
       </div>
     );
   }

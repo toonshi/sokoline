@@ -113,6 +113,20 @@ export async function fetchMyShop(token: string): Promise<Shop | null> {
   }
 }
 
+export async function createShop(token: string, data: Partial<Shop>): Promise<Shop | null> {
+  try {
+    const response = await authenticatedFetch("/shops/", token, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error("Error creating shop:", error);
+    return null;
+  }
+}
+
 export async function updateShop(token: string, shopId: number, data: Partial<Shop>): Promise<Shop | null> {
   try {
     const response = await authenticatedFetch(`/shops/${shopId}/`, token, {
